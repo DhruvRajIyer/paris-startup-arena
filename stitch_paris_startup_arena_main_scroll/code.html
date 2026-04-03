@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Paris Startup Arena | The Digital Curator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&amp;family=DM+Mono:wght@300;400;500&amp;family=Space+Grotesk:wght@300;400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#060604",
+                        "surface-container-low": "#0E0D0A",
+                        "outline-variant": "#1C1A14",
+                        "primary": "#C8A96E",
+                        "on-surface": "#E8DFC8",
+                        "on-surface-variant": "#9A9282",
+                        "tertiary": "#4A4030"
+                    },
+                    fontFamily: {
+                        "headline": ["Cormorant Garamond", "serif"],
+                        "body": ["Cormorant Garamond", "serif"],
+                        "label": ["DM Mono", "monospace"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0px",
+                        "sm": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #060604;
+            color: #E8DFC8;
+            cursor: none;
+        }
+        .perspective-1000 { perspective: 1000px; }
+        .card-3d {
+            transform: rotateX(2deg) rotateY(-1deg);
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+        }
+        .card-3d:hover {
+            transform: rotateX(0deg) rotateY(0deg) scale(1.02);
+            box-shadow: 0 20px 40px rgba(200, 169, 110, 0.08);
+        }
+        .glass {
+            background: rgba(14, 13, 10, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(200, 169, 110, 0.15);
+        }
+        .custom-cursor {
+            width: 8px;
+            height: 8px;
+            background: #C8A96E;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 15px #C8A96E;
+        }
+        .mesh-gradient {
+            background-image: radial-gradient(at 0% 0%, rgba(200, 169, 110, 0.05) 0px, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(200, 169, 110, 0.03) 0px, transparent 50%);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="font-body selection:bg-primary/30 selection:text-primary">
+<!-- Custom Cursor -->
+<div class="custom-cursor" id="cursor"></div>
+<!-- Navigation Shell (TopNavBar) -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-6 bg-transparent backdrop-blur-md">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xl font-light tracking-widest text-[#E8DFC8] font-serif uppercase">PARIS STARTUP ARENA</span>
+</div>
+<div class="hidden md:flex gap-10 items-center">
+<a class="text-[#C8A96E] border-b border-[#C8A96E]/30 pb-1 font-label text-[10px] uppercase tracking-[0.12em]" href="#">Discover</a>
+<a class="text-[#9A9282] hover:text-[#E8DFC8] transition-colors duration-300 font-label text-[10px] uppercase tracking-[0.12em]" href="#">Sectors</a>
+<a class="text-[#9A9282] hover:text-[#E8DFC8] transition-colors duration-300 font-label text-[10px] uppercase tracking-[0.12em]" href="#">Map</a>
+<a class="text-[#9A9282] hover:text-[#E8DFC8] transition-colors duration-300 font-label text-[10px] uppercase tracking-[0.12em]" href="#">Waitlist</a>
+</div>
+<button class="bg-primary text-surface font-label text-[10px] px-6 py-2 uppercase tracking-widest hover:bg-on-surface transition-all duration-300 active:scale-95">
+            Post a Job
+        </button>
+</nav>
+<!-- Section 1: Hero -->
+<section class="relative h-screen flex flex-col items-center justify-center overflow-hidden mesh-gradient">
+<!-- Placeholder for 3D Background -->
+<div class="absolute inset-0 z-0 opacity-40">
+<img class="w-full h-full object-cover grayscale brightness-50 contrast-125" data-alt="Isometric wireframe 3D map of Paris at night with golden grid lines and illuminated landmarks like the Eiffel Tower" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlDwyAvt8oFfkWgSuN8a2ycCjy9f78fc6672wRC_J0w9oMjadsJ0Gi2CPIeru59FHSOdWiXdDmhw266whNoWkUB3w4-w61W24f7toOixckr28jRi0aR_m16mspdswV4OdRdUsiyBLbPJeVFafmvlyynfmyLi7VrcphMjDcSGkyYTeIjwRGt2eSsF3Vs2vJbNYNieefFom8nvXIa00uUEnpouiqRVzwrmKcShthU89D2pAbRjdb8GLek9nOmZR0xndj_8gQ4zNHiQqb"/>
+<div class="absolute inset-0 bg-gradient-to-b from-surface via-transparent to-surface"></div>
+</div>
+<div class="relative z-10 text-center flex flex-col items-center max-w-5xl px-6">
+<h1 class="text-7xl md:text-9xl font-headline tracking-tight text-on-surface mb-8">
+                PARIS <span class="italic text-primary font-light">Startup</span> ARENA
+            </h1>
+<div class="flex flex-wrap justify-center gap-12 mt-4">
+<div class="flex flex-col items-center">
+<span class="font-label text-xs tracking-[0.2em] text-tertiary uppercase">247 Open Roles</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="font-label text-xs tracking-[0.2em] text-tertiary uppercase">83 Startups</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="font-label text-xs tracking-[0.2em] text-tertiary uppercase">Daily Refresh</span>
+</div>
+</div>
+</div>
+<div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
+<div class="w-[1px] h-16 bg-gradient-to-b from-primary/0 to-primary"></div>
+<span class="material-symbols-outlined text-primary animate-bounce">expand_more</span>
+</div>
+<!-- Bottom Pulse Bar -->
+<div class="absolute bottom-0 w-full py-4 border-t border-outline-variant/30 flex justify-center items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_#C8A96E]"></div>
+<span class="font-label text-[9px] uppercase tracking-[0.3em] text-on-surface-variant">Live Intelligence Feed Active</span>
+</div>
+</section>
+<!-- Section 2: Sticky Filter Shelf -->
+<div class="sticky top-0 z-40 py-4 px-8 glass border-x-0">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex items-center gap-2">
+<span class="font-headline italic text-primary text-xl">The Curator</span>
+</div>
+<div class="flex flex-wrap justify-center gap-3">
+<button class="px-4 py-1.5 font-label text-[10px] tracking-widest uppercase bg-primary text-surface border border-primary">All</button>
+<button class="px-4 py-1.5 font-label text-[10px] tracking-widest uppercase border border-outline-variant text-on-surface-variant hover:border-primary/50 hover:text-on-surface transition-all">Engineering</button>
+<button class="px-4 py-1.5 font-label text-[10px] tracking-widest uppercase border border-outline-variant text-on-surface-variant hover:border-primary/50 hover:text-on-surface transition-all">Design</button>
+<button class="px-4 py-1.5 font-label text-[10px] tracking-widest uppercase border border-outline-variant text-on-surface-variant hover:border-primary/50 hover:text-on-surface transition-all">Product</button>
+<button class="px-4 py-1.5 font-label text-[10px] tracking-widest uppercase border border-outline-variant text-on-surface-variant hover:border-primary/50 hover:text-on-surface transition-all">DeepTech</button>
+</div>
+<div class="flex items-center gap-6">
+<span class="font-label text-[10px] text-tertiary tracking-widest uppercase">Showing 142 Results</span>
+<div class="flex bg-surface-container-low p-1 border border-outline-variant">
+<button class="p-1.5 text-primary bg-primary/10">
+<span class="material-symbols-outlined text-sm">grid_view</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-sm">map</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 3: Job Card Grid -->
+<section class="max-w-7xl mx-auto px-8 py-24 perspective-1000">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Featured Card -->
+<div class="lg:col-span-2 group">
+<div class="card-3d bg-surface-container-low p-8 relative overflow-hidden h-full border border-primary/20">
+<div class="absolute top-0 right-0 p-4">
+<span class="font-label text-[10px] tracking-[0.2em] bg-primary text-surface px-3 py-1 uppercase">Featured</span>
+</div>
+<div class="flex items-center gap-3 mb-6">
+<div class="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.6)]"></div>
+<span class="font-label text-[10px] text-on-surface-variant uppercase tracking-widest">DeepTech • Quantum</span>
+</div>
+<h3 class="text-4xl font-headline text-on-surface mb-4">Senior Quantum Algorithm Engineer</h3>
+<div class="flex flex-col gap-1 mb-8">
+<p class="font-headline italic text-xl text-primary">Pasqal</p>
+<p class="font-label text-xs text-tertiary uppercase">Massy-Paris Sud</p>
+</div>
+<div class="mt-auto flex justify-between items-end">
+<div class="flex gap-4">
+<span class="font-label text-[10px] text-tertiary border border-outline-variant px-2 py-1 uppercase">Full-Time</span>
+<span class="font-label text-[10px] text-tertiary border border-outline-variant px-2 py-1 uppercase">€85k - €120k</span>
+</div>
+<span class="font-label text-[10px] text-tertiary uppercase">2h ago</span>
+</div>
+</div>
+</div>
+<!-- Standard Card 1 -->
+<div class="group">
+<div class="card-3d bg-surface-container-low p-8 border border-outline-variant hover:border-primary/40 flex flex-col h-full">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]"></div>
+<span class="font-label text-[10px] text-on-surface-variant uppercase tracking-widest">HealthTech</span>
+</div>
+<h3 class="text-2xl font-headline text-on-surface mb-4">Lead Product Designer</h3>
+<div class="flex flex-col gap-1 mb-8">
+<p class="font-headline italic text-lg text-primary">Alan</p>
+<p class="font-label text-xs text-tertiary uppercase">Paris 02</p>
+</div>
+<div class="mt-auto flex justify-between items-end">
+<span class="font-label text-[10px] text-tertiary border border-outline-variant px-2 py-1 uppercase">Hybrid</span>
+<span class="font-label text-[10px] text-tertiary uppercase">5h ago</span>
+</div>
+</div>
+</div>
+<!-- Standard Card 2 -->
+<div class="group">
+<div class="card-3d bg-surface-container-low p-8 border border-outline-variant hover:border-primary/40 flex flex-col h-full">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.6)]"></div>
+<span class="font-label text-[10px] text-on-surface-variant uppercase tracking-widest">FinTech</span>
+</div>
+<h3 class="text-2xl font-headline text-on-surface mb-4">Staff Backend Developer</h3>
+<div class="flex flex-col gap-1 mb-8">
+<p class="font-headline italic text-lg text-primary">Lydia</p>
+<p class="font-label text-xs text-tertiary uppercase">Paris 09</p>
+</div>
+<div class="mt-auto flex justify-between items-end">
+<span class="font-label text-[10px] text-tertiary border border-outline-variant px-2 py-1 uppercase">On-site</span>
+<span class="font-label text-[10px] text-tertiary uppercase">Yesterday</span>
+</div>
+</div>
+</div>
+<!-- Standard Card 3 -->
+<div class="group">
+<div class="card-3d bg-surface-container-low p-8 border border-outline-variant hover:border-primary/40 flex flex-col h-full">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-2 h-2 rounded-full bg-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.6)]"></div>
+<span class="font-label text-[10px] text-on-surface-variant uppercase tracking-widest">SaaS</span>
+</div>
+<h3 class="text-2xl font-headline text-on-surface mb-4">Growth Marketing Lead</h3>
+<div class="flex flex-col gap-1 mb-8">
+<p class="font-headline italic text-lg text-primary">Pigment</p>
+<p class="font-label text-xs text-tertiary uppercase">Paris 11</p>
+</div>
+<div class="mt-auto flex justify-between items-end">
+<span class="font-label text-[10px] text-tertiary border border-outline-variant px-2 py-1 uppercase">Remote</span>
+<span class="font-label text-[10px] text-tertiary uppercase">2d ago</span>
+</div>
+</div>
+</div>
+<!-- Standard Card 4 -->
+<div class="group">
+<div class="card-3d bg-surface-container-low p-8 border border-outline-variant hover:border-primary/40 flex flex-col h-full">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-2 h-2 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.6)]"></div>
+<span class="font-label text-[10px] text-on-surface-variant uppercase tracking-widest">AI / ML</span>
+</div>
+<h3 class="text-2xl font-headline text-on-surface mb-4">ML Ops Engineer</h3>
+<div class="flex flex-col gap-1 mb-8">
+<p class="font-headline italic text-lg text-primary">Mistral AI</p>
+<p class="font-label text-xs text-tertiary uppercase">Paris 01</p>
+</div>
+<div class="mt-auto flex justify-between items-end">
+<span class="font-label text-[10px] text-tertiary border border-outline-variant px-2 py-1 uppercase">On-site</span>
+<span class="font-label text-[10px] text-tertiary uppercase">3d ago</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: 3D Paris Map Section -->
+<section class="relative h-screen bg-surface flex flex-col overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover opacity-30 grayscale brightness-50" data-alt="Top-down dark mode map of Paris with glowing 3D data columns of different heights representing startup density in each district" data-location="Paris" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCymqn-QeGJMe9iaXeivxI0GoUc7mcnu4f_XN75GlhJZC66m74WYzhz9wd_dCngjxlWmi022PGDqttw106tg9TVlCWlgRABzL44FluJAdMvurzRDVZaQZyp8HXAFwglVLjwNLyOcEnfgXSHy7VCncp1gG7yrJ5R9XNSWlwgV9djW4JWx_eyzg4-zsJpXqO9xzYBzf0xzOKtp418rNE2xoqzigqFsVq5AGtRmWCMD0qv2sK1XrWdXmcjep2Q5h0heGKssuBppxTCDnoC"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-surface"></div>
+</div>
+<div class="relative z-10 p-12 pointer-events-none">
+<h2 class="text-5xl md:text-7xl font-headline text-on-surface uppercase tracking-tight max-w-2xl leading-none">
+                FIND ROLES <span class="italic text-primary">Across</span> PARIS
+            </h2>
+</div>
+<div class="absolute bottom-12 right-12 z-20 flex flex-col gap-4 pointer-events-auto">
+<div class="glass p-6 w-80">
+<div class="flex justify-between items-center mb-4">
+<span class="font-label text-[10px] text-on-surface tracking-widest uppercase">Paris 02 • Bourse</span>
+<span class="font-label text-[10px] text-primary">12 Roles</span>
+</div>
+<div class="space-y-4">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 bg-surface flex-shrink-0 border border-outline-variant"></div>
+<div>
+<p class="font-headline text-on-surface">Data Scientist</p>
+<p class="font-label text-[9px] text-tertiary uppercase">Dataiku</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 bg-surface flex-shrink-0 border border-outline-variant"></div>
+<div>
+<p class="font-headline text-on-surface">iOS Developer</p>
+<p class="font-label text-[9px] text-tertiary uppercase">BlaBlaCar</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-2 bg-primary text-surface font-label text-[10px] uppercase tracking-widest">Explore District</button>
+</div>
+<div class="glass flex p-1 justify-around">
+<button class="flex-1 py-2 font-label text-[9px] uppercase tracking-widest text-primary border-r border-primary/10">Pins</button>
+<button class="flex-1 py-2 font-label text-[9px] uppercase tracking-widest text-on-surface-variant">Heatmap</button>
+</div>
+</div>
+<div class="absolute top-12 right-12 z-20 pointer-events-auto">
+<div class="glass flex items-center px-4 py-2 w-72">
+<span class="material-symbols-outlined text-tertiary text-sm">search</span>
+<input class="bg-transparent border-none text-[10px] font-label uppercase tracking-widest text-on-surface focus:ring-0 placeholder:text-tertiary w-full" placeholder="Search by Arrondissement..." type="text"/>
+</div>
+</div>
+</section>
+<!-- Section 5: City Expansion -->
+<section class="py-32 px-8 bg-surface">
+<div class="max-w-7xl mx-auto">
+<h2 class="text-4xl font-headline text-on-surface uppercase tracking-[0.2em] mb-16 text-center">BEYOND <span class="italic text-primary">Paris</span></h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+<!-- Lyon -->
+<div class="group cursor-pointer">
+<div class="relative h-96 overflow-hidden mb-6">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-out transform group-hover:scale-110" data-alt="Black and white architectural view of Lyon, France, transitioning to warm golden color tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBifSRr8KwpWFVfQ1hKYxMI1sd2olNKe_nlveqpUDdjR8C1JJjoF6f7ZRid8Rc3OYewSNlMVJX6s-869B_NW8TJBpXKyauLbHBdIP8Zwc-sST_cEJYPyxqhwckZ_rcjpgRoRIIeCeN2yOMvf7JTAZJI-QVX7x5ll-5uZT8o_We_GjxCtXpgoRIEN2coIbXbJE89Bqshzu_wkhtEsQ4_-FP4ZE8HfkkVZAG5gyVVXF0FnEXAovFF5Hb2p9lR96kzPvHVsly5OYw-b05N"/>
+<div class="absolute inset-0 bg-surface/40 group-hover:bg-transparent transition-colors"></div>
+<div class="absolute bottom-8 left-8">
+<h4 class="text-3xl font-headline text-on-surface uppercase tracking-widest">Lyon</h4>
+<p class="font-label text-[10px] text-primary uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-opacity">12 Active Roles</p>
+</div>
+</div>
+</div>
+<!-- Bordeaux -->
+<div class="group cursor-pointer">
+<div class="relative h-96 overflow-hidden mb-6">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-out transform group-hover:scale-110" data-alt="Black and white cinematic view of the Garonne river in Bordeaux, transitioning to golden sunset hues on hover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYIeJHBeO5BL13hM4SWt1vU1t64sa2SorGRmcLKDXYa4XEBESMf_w6TnMBe6HrHF8f3s7fXjNX29DQJb01_YFBJmPt3rRDB0Zg66Jzfd9xyNcZgjzQwzA4uixedxim--PI0JXR109P7L1DVMIX8bEjaSp490MYoVuqzy3lGA-1YmG8pF-c34HRRIm4-U3trKyqG00mHcE4SLPihRbDtX42LQlN3iZq7JfMtcxVNKgfopMQDeiid52q75MTBI_5dl4g1HuwhXGWMH-o"/>
+<div class="absolute inset-0 bg-surface/40 group-hover:bg-transparent transition-colors"></div>
+<div class="absolute bottom-8 left-8">
+<h4 class="text-3xl font-headline text-on-surface uppercase tracking-widest">Bordeaux</h4>
+<p class="font-label text-[10px] text-primary uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-opacity">8 Active Roles</p>
+</div>
+</div>
+</div>
+<!-- Berlin -->
+<div class="group cursor-pointer">
+<div class="relative h-96 overflow-hidden mb-6">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-out transform group-hover:scale-110" data-alt="Atmospheric black and white street scene in Berlin, blooming with vibrant night life colors on hover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCp8P6fNYPw_e8uOH5N6Hwv4uv4P85CcfjuA9-MmaqNTrvs2SPPyy8JlIlIPus9QuVf3X0qdQrs4pcd_mL_nbioOXkYzZCn8GvR0NewwbMxdD9MjnCWT-rbiQES0ndA9-3K4H8Rm1CAWQyCS-aXBBhTwPaUtJOmWiNf9cb22wOUu941psi8DSCl4XIuv-w5QrGenG8c6ZpgWv6MUE0Z0HmtGaWKXKunVUxIrGKOV1PxLQU3Tu7NFQ2ecnlyeBOldpiJ3bfsi67N5fv1"/>
+<div class="absolute inset-0 bg-surface/40 group-hover:bg-transparent transition-colors"></div>
+<div class="absolute bottom-8 left-8">
+<h4 class="text-3xl font-headline text-on-surface uppercase tracking-widest">Berlin</h4>
+<p class="font-label text-[10px] text-primary uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-opacity">Coming Soon</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 6: Waitlist + Footer -->
+<section class="bg-surface relative overflow-hidden pt-32">
+<div class="max-w-4xl mx-auto px-8 text-center mb-32">
+<h2 class="text-6xl md:text-8xl font-headline text-on-surface mb-12">STAY <span class="italic text-primary">In The</span> ARENA</h2>
+<p class="font-headline italic text-2xl text-on-surface-variant mb-12 max-w-2xl mx-auto">Receive curated roles directly in your inbox before they are published.</p>
+<form class="flex flex-col md:flex-row gap-4 max-w-xl mx-auto">
+<input class="flex-1 bg-surface-container-low border border-outline-variant px-6 py-4 font-label text-[10px] uppercase tracking-widest focus:ring-1 focus:ring-primary focus:border-primary text-on-surface" placeholder="YOUR EMAIL ADDRESS" type="email"/>
+<button class="bg-primary text-surface px-10 py-4 font-label text-[10px] uppercase tracking-widest hover:bg-on-surface transition-colors">Join Waitlist</button>
+</form>
+</div>
+<div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-8 mb-32">
+<div class="group border border-outline-variant p-10 hover:border-primary/40 transition-colors">
+<h5 class="font-headline text-3xl text-on-surface mb-4">Advertise a Role</h5>
+<p class="font-body italic text-on-surface-variant mb-8">Reach the top 1% of technical talent in the Parisian ecosystem.</p>
+<button class="font-label text-[10px] uppercase tracking-widest text-primary flex items-center gap-2 group-hover:gap-4 transition-all">Start Hiring <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+</div>
+<div class="group border border-outline-variant p-10 hover:border-primary/40 transition-colors">
+<h5 class="font-headline text-3xl text-on-surface mb-4">List Your Startup</h5>
+<p class="font-body italic text-on-surface-variant mb-8">Increase your visibility within the Paris Startup Arena community.</p>
+<button class="font-label text-[10px] uppercase tracking-widest text-primary flex items-center gap-2 group-hover:gap-4 transition-all">Submit Entry <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+</div>
+</div>
+<!-- Footer -->
+<footer class="w-full flex flex-col items-center justify-center gap-6 px-8 py-12 border-t border-[#1C1A14] bg-[#060604]">
+<div class="flex items-center gap-4 mb-4">
+<span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xl font-light tracking-widest text-[#E8DFC8] font-serif uppercase">PARIS STARTUP ARENA</span>
+</div>
+<div class="flex flex-wrap justify-center gap-8 mb-6">
+<a class="text-[#4A4030] hover:text-[#E8DFC8] transition-colors font-label text-[10px] uppercase tracking-widest" href="#">Privacy</a>
+<a class="text-[#4A4030] hover:text-[#E8DFC8] transition-colors font-label text-[10px] uppercase tracking-widest" href="#">Terms</a>
+<a class="text-[#4A4030] hover:text-[#E8DFC8] transition-colors font-label text-[10px] uppercase tracking-widest" href="#">Manifesto</a>
+<a class="text-[#4A4030] hover:text-[#E8DFC8] transition-colors font-label text-[10px] uppercase tracking-widest" href="#">API</a>
+</div>
+<div class="text-[#4A4030] font-label text-[10px] uppercase tracking-[0.2em]">
+                MADE IN PARIS • © 2025 THE DIGITAL CURATOR. ALL RIGHTS RESERVED.
+            </div>
+</footer>
+</section>
+<script>
+        // Custom Cursor Logic
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        document.addEventListener('mousedown', () => cursor.style.transform = 'scale(0.8)');
+        document.addEventListener('mouseup', () => cursor.style.transform = 'scale(1)');
+
+        // Hover effect for links
+        const interactables = document.querySelectorAll('button, a, input, .group');
+        interactables.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.width = '24px';
+                cursor.style.height = '24px';
+                cursor.style.backgroundColor = 'transparent';
+                cursor.style.border = '1px solid #C8A96E';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.style.width = '8px';
+                cursor.style.height = '8px';
+                cursor.style.backgroundColor = '#C8A96E';
+                cursor.style.border = 'none';
+            });
+        });
+    </script>
+</body></html>

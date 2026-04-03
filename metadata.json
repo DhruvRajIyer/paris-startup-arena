@@ -1,0 +1,5 @@
+{
+  "name": "Paris Startup Arena",
+  "description": "A single-scroll, 3D spatial job discovery platform for Paris startups.",
+  "requestFramePermissions": ["geolocation"]
+}
