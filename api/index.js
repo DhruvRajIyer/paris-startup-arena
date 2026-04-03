@@ -81,7 +81,7 @@ app.get('/api/jobs', async (req, res) => {
         id, title, category, tags, salary_min, salary_max,
         salary_currency, work_mode, description, requirements,
         apply_url, is_featured, posted_at, expires_at,
-        company:companies (
+        companies (
           id, name, slug, sector, logo_initials, logo_url,
           lat, lng, arrondissement, funding_stage
         )

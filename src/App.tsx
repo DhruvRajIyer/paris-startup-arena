@@ -35,14 +35,21 @@ export default function App() {
     };
     checkConnection();
 
-    // Fetch jobs from our mock API
+    // Fetch jobs from API
     fetch("/api/jobs")
       .then(res => res.json())
       .then(data => {
-        setJobs(data);
-        setFilteredJobs(data);
+        // Handle both old mock format and new API format
+        const jobsData = data.jobs || data;
+        // Transform to match Job type (rename 'companies' to 'company')
+        const transformedJobs = jobsData.map((job: any) => ({
+          ...job,
+          company: job.companies || job.company
+        }));
+        setJobs(transformedJobs);
+        setFilteredJobs(transformedJobs);
       })
-      .catch(err => console.error(err));
+      .catch(err => console.error('Error fetching jobs:', err));
   }, []);
 
   useEffect(() => {
