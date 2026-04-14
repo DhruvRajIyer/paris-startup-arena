@@ -88,15 +88,13 @@ async function startServer() {
         .select(`
           id, title, category, tags, salary_min, salary_max,
           salary_currency, work_mode, description, requirements,
-          apply_url, source, source_id, is_featured, posted_at, expires_at,
+          apply_url, is_featured, posted_at, expires_at,
           companies (
             id, name, slug, sector, logo_initials, logo_url,
             lat, lng, arrondissement, funding_stage
           )
         `)
-        .in('source', ['greenhouse', 'lever', 'ashby'])
         .eq('is_active', true)
-        .in('source', ['greenhouse', 'lever', 'ashby'])
         .order('is_featured', { ascending: false })
         .order('posted_at', { ascending: false })
         .range(Number(offset), Number(offset) + Number(limit) - 1);

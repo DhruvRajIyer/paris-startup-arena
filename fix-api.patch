@@ -1,0 +1,11 @@
+--- a/server.ts
++++ b/server.ts
+@@ -94,6 +94,8 @@ app.get("/api/jobs", async (req, res) => {
+             lat, lng, arrondissement, funding_stage
+           )
+         `)
++        // Prioritize ATS jobs over manual seed jobs
++        .in('source', ['greenhouse', 'lever', 'ashby'])
+         .eq('is_active', true)
+         .order('is_featured', { ascending: false })
+         .order('posted_at', { ascending: false })

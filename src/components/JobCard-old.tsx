@@ -10,29 +10,11 @@ interface JobCardProps {
 export function JobCard({ job, onClick }: JobCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    console.log('🔍 JobCard clicked:', {
-      title: job.title,
-      apply_url: job.apply_url,
-      has_url: !!job.apply_url,
-      url_type: typeof job.apply_url
-    });
-
+  const handleCardClick = () => {
     // If apply_url exists, open it in a new tab
     if (job.apply_url) {
-      console.log('✅ Opening URL:', job.apply_url);
-      const newWindow = window.open(job.apply_url, '_blank', 'noopener,noreferrer');
-      
-      if (!newWindow) {
-        console.error('❌ Popup blocked! Please allow popups for this site.');
-        alert('Please allow popups to apply for this job.\n\nURL: ' + job.apply_url);
-      } else {
-        console.log('✅ Window opened successfully');
-      }
-    } else {
-      console.warn('⚠️  No apply_url for this job');
+      window.open(job.apply_url, '_blank', 'noopener,noreferrer');
     }
-    
     // Also trigger the onClick callback if provided
     onClick?.(job);
   };
