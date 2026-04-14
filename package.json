@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "seed": "tsx scripts/seed.ts",
     "seed:full": "tsx scripts/seed-with-jobs.ts",
+    "seed:ats": "tsx scripts/seed-ats-companies.ts",
     "sync": "tsx scripts/sync.ts",
     "test:connection": "tsx scripts/test-connection.ts",
     "test:ats": "tsx scripts/test-ats.ts",

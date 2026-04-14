@@ -10,6 +10,15 @@ interface JobCardProps {
 export function JobCard({ job, onClick }: JobCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
+  const handleCardClick = () => {
+    // If apply_url exists, open it in a new tab
+    if (job.apply_url) {
+      window.open(job.apply_url, '_blank', 'noopener,noreferrer');
+    }
+    // Also trigger the onClick callback if provided
+    onClick?.(job);
+  };
+
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
@@ -48,7 +57,7 @@ export function JobCard({ job, onClick }: JobCardProps) {
   return (
     <motion.div 
       className="group h-full cursor-pointer" 
-      onClick={() => onClick?.(job)}
+      onClick={handleCardClick}
       initial={{ opacity: 0, y: 30, rotateX: 5 }}
       whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
       viewport={{ once: true, margin: '-50px' }}
@@ -89,10 +98,18 @@ export function JobCard({ job, onClick }: JobCardProps) {
                <span className="font-label text-[10px] text-tertiary border border-outline-variant px-3 py-1 uppercase">€{job.salary_min}k - €{job.salary_max}k</span>
             )}
           </div>
-          <span className="font-label text-[10px] text-tertiary uppercase flex items-center gap-2">
-            {job.is_featured && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-gold"></span>}
-            Active
-          </span>
+          <div className="flex items-center gap-3">
+            {job.apply_url && (
+              <span className="font-label text-[10px] text-primary uppercase flex items-center gap-1 hover:text-on-surface transition-colors">
+                <span className="material-symbols-outlined text-sm">open_in_new</span>
+                Apply
+              </span>
+            )}
+            <span className="font-label text-[10px] text-tertiary uppercase flex items-center gap-2">
+              {job.is_featured && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-gold"></span>}
+              Active
+            </span>
+          </div>
         </div>
       </div>
     </motion.div>
