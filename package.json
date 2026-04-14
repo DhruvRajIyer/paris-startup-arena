@@ -11,6 +11,7 @@
     "seed:full": "tsx scripts/seed-with-jobs.ts",
     "sync": "tsx scripts/sync.ts",
     "test:connection": "tsx scripts/test-connection.ts",
+    "test:ats": "tsx scripts/test-ats.ts",
     "test:wttj": "tsx scripts/test-wttj.ts",
     "db:migrate": "echo 'Run supabase/schema.sql in Supabase SQL Editor'",
     "vercel-build": "vite build",

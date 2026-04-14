@@ -1,11 +1,11 @@
 # Paris Startup Arena 🗼
 
-An interactive map showcasing job opportunities at Paris-based startups. Explore roles across DeepTech, FinTech, HealthTech, and more with real-time data from Welcome to the Jungle.
+An interactive map showcasing job opportunities at Paris-based startups. Explore roles across DeepTech, FinTech, HealthTech, and more with real-time data from Welcome to the Jungle and ATS scrapers.
 
 ## ✨ Features
 
 - **Interactive Map** - Mapbox GL map with job pins across Paris arrondissements
-- **Live Job Data** - Automated daily sync from Welcome to the Jungle
+- **Live Job Data** - Automated daily sync from Welcome to the Jungle and ATS scrapers
 - **Smart Filtering** - Filter by category, sector, work mode, and location
 - **Company Profiles** - Detailed company info with funding stage and team size
 - **Responsive Design** - Split-screen layout with map and scrollable job cards
@@ -79,6 +79,7 @@ The project includes automated daily job sync via GitHub Actions:
 ## 📚 Documentation
 
 - **[BACKEND_SETUP.md](./BACKEND_SETUP.md)** - Complete backend setup guide
+- **[ATS_SCRAPERS.md](./ATS_SCRAPERS.md)** - ATS scraper documentation and usage
 - **[VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)** - Vercel deployment guide
 - **[supabase/schema.sql](./supabase/schema.sql)** - Database schema
 
