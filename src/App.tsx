@@ -220,13 +220,24 @@ export default function App() {
             ))}
           </motion.div>
           <motion.div 
-            className="text-[#4A4030] font-label text-[10px] uppercase tracking-[0.2em]"
+            className="text-[#4A4030] font-label text-[10px] uppercase tracking-[0.2em] flex flex-col gap-2 items-center"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.5 }}
           >
-            MADE IN PARIS • © 2025 THE DIGITAL CURATOR. ALL RIGHTS RESERVED.
+            <div>MADE IN PARIS • © 2025 THE DIGITAL CURATOR. ALL RIGHTS RESERVED.</div>
+            <div className="text-[9px]">
+              <a 
+                href="https://logo.dev" 
+                title="Logo API" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors"
+              >
+                Logos provided by Logo.dev
+              </a>
+            </div>
           </motion.div>
         </motion.footer>
       </main>

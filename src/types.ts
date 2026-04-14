@@ -8,6 +8,7 @@ export interface Company {
   name: string;
   sector: Sector;
   logo_initials?: string;
+  logo_url?: string;
   lat: number;
   lng: number;
   arrondissement?: number;

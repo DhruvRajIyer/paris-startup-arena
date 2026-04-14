@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test</title></head>
+<body>
+<h1>Frontend Test</h1>
+<script>
+console.log('✅ JavaScript is running');
+console.log('Testing window.open...');
+const w = window.open('https://google.com', '_blank', 'noopener,noreferrer');
+console.log('Window opened:', !!w);
+</script>
+
+<button onclick="alert('Click works!'); window.open('https://google.com', '_blank')">
+  Test Click
+</button>
+
+<p>Instructions:</p>
+<ol>
+  <li>Open browser console</li>
+  <li>You should see: ✅ JavaScript is running</li>
+  <li>Click the button above</li>
+  <li>If popup opens → window.open works</li>
+  <li>If nothing → popup blocker or browser issue</li>
+</ol>
+
+<p>Now visit: <a href="http://localhost:3000">http://localhost:3000</a></p>
+<p>And check if you see ANY console output at all</p>
+</body>
+</html>

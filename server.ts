@@ -91,7 +91,7 @@ async function startServer() {
           apply_url, source, source_id, is_featured, posted_at, expires_at,
           companies (
             id, name, slug, sector, logo_initials, logo_url,
-            lat, lng, arrondissement, funding_stage
+            lat, lng, arrondissement, funding_stage, website
           )
         `)
         .in('source', ['greenhouse', 'lever', 'ashby'])

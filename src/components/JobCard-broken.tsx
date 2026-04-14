@@ -10,17 +10,30 @@ interface JobCardProps {
 export function JobCard({ job, onClick }: JobCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // Simple, direct click handler
-  const openJobApplication = () => {
-    console.log('🎯 Card clicked!', job.title);
-    
+  const handleCardClick = (e: React.MouseEvent) => {
+    console.log('🔍 JobCard clicked:', {
+      title: job.title,
+      apply_url: job.apply_url,
+      has_url: !!job.apply_url,
+      url_type: typeof job.apply_url
+    });
+
+    // If apply_url exists, open it in a new tab
     if (job.apply_url) {
-      console.log('Opening:', job.apply_url);
-      window.open(job.apply_url, '_blank', 'noopener,noreferrer');
+      console.log('✅ Opening URL:', job.apply_url);
+      const newWindow = window.open(job.apply_url, '_blank', 'noopener,noreferrer');
+      
+      if (!newWindow) {
+        console.error('❌ Popup blocked! Please allow popups for this site.');
+        alert('Please allow popups to apply for this job.\n\nURL: ' + job.apply_url);
+      } else {
+        console.log('✅ Window opened successfully');
+      }
     } else {
-      console.warn('No apply_url');
+      console.warn('⚠️  No apply_url for this job');
     }
     
+    // Also trigger the onClick callback if provided
     onClick?.(job);
   };
 
@@ -53,6 +66,7 @@ export function JobCard({ job, onClick }: JobCardProps) {
     };
   }, []);
 
+  // Determine indicator color based on category
   let glowColorClass = "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]";
   if (job.category === 'eng') glowColorClass = "bg-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.6)]";
   else if (job.category === 'product') glowColorClass = "bg-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.6)]";
@@ -60,7 +74,8 @@ export function JobCard({ job, onClick }: JobCardProps) {
 
   return (
     <motion.div 
-      className="group h-full" 
+      className="group h-full cursor-pointer" 
+      onClick={handleCardClick}
       initial={{ opacity: 0, y: 30, rotateX: 5 }}
       whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
       viewport={{ once: true, margin: '-50px' }}
@@ -72,33 +87,29 @@ export function JobCard({ job, onClick }: JobCardProps) {
     >
       <div 
         ref={cardRef}
-        onClick={openJobApplication}
-        role="button"
-        tabIndex={0}
-        onKeyPress={(e) => { if (e.key === 'Enter') openJobApplication(); }}
-        className={`card-3d bg-surface-container-low p-8 relative overflow-hidden h-full flex flex-col cursor-pointer ${job.is_featured ? 'card-3d-featured border border-primary/30' : 'border border-outline-variant hover:border-primary/40'}`}
+        className={`card-3d bg-surface-container-low p-8 relative overflow-hidden h-full flex flex-col ${job.is_featured ? 'card-3d-featured border border-primary/30' : 'border border-outline-variant hover:border-primary/40'}`}
       >
         {job.is_featured && (
-          <div className="absolute top-0 right-0 p-6 pointer-events-none">
+          <div className="absolute top-0 right-0 p-6">
             <span className="font-label text-[10px] tracking-[0.2em] bg-primary text-surface px-4 py-1 uppercase shadow-xl">Featured</span>
           </div>
         )}
 
-        <div className="flex items-center gap-3 mb-6 pointer-events-none">
+        <div className="flex items-center gap-3 mb-6">
           <div className={`w-2.5 h-2.5 rounded-full ${glowColorClass} ${job.is_featured ? 'pulse-gold' : ''}`}></div>
           <span className="font-label text-[10px] text-on-surface-variant uppercase tracking-widest">
              {job.category === 'eng' ? 'Engineering' : job.category}
           </span>
         </div>
         
-        <h3 className={`${job.is_featured ? 'text-5xl mb-6' : 'text-2xl mb-4'} font-headline text-on-surface pointer-events-none`}>{job.title}</h3>
+        <h3 className={`${job.is_featured ? 'text-5xl mb-6' : 'text-2xl mb-4'} font-headline text-on-surface`}>{job.title}</h3>
         
-        <div className={`flex flex-col ${job.is_featured ? 'gap-2 mb-10' : 'gap-1 mb-8'} pointer-events-none`}>
+        <div className={`flex flex-col ${job.is_featured ? 'gap-2 mb-10' : 'gap-1 mb-8'}`}>
           <p className={`font-headline italic ${job.is_featured ? 'text-2xl' : 'text-lg'} text-primary`}>{job.company?.name || 'Unknown Company'}</p>
           <p className="font-label text-xs text-tertiary uppercase">Paris</p>
         </div>
 
-        <div className="mt-auto flex justify-between items-end pointer-events-none">
+        <div className="mt-auto flex justify-between items-end">
           <div className="flex gap-4">
             <span className="font-label text-[10px] text-tertiary border border-outline-variant px-3 py-1 uppercase">{job.work_mode}</span>
             {job.salary_min && job.salary_max && (

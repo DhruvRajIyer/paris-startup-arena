@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback, useRef } from 'react';
 import Map, { Marker, NavigationControl, GeolocateControl } from 'react-map-gl';
 import { motion, AnimatePresence } from 'motion/react';
 import { Job } from '../types';
+import { CompanyLogo } from './CompanyLogo';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 interface MapViewProps {
@@ -158,38 +159,24 @@ export function MapView({ jobs, onJobClick }: MapViewProps) {
                 key={job.id}
                 latitude={job.company.lat}
                 longitude={job.company.lng}
-                anchor="bottom"
+                anchor="center"
               >
                 <motion.div
-                  className="cursor-pointer relative"
+                  className="cursor-pointer"
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ 
-                    scale: isHovered ? 1.5 : 1, 
+                    scale: 1, 
                     opacity: 1,
                     zIndex: isHovered ? 50 : 1
                   }}
                   transition={{ duration: 0.3 }}
                   onClick={() => handlePinClick(job)}
                 >
-                  <div 
-                    className="relative"
-                    style={{
-                      width: job.is_featured ? '24px' : '16px',
-                      height: job.is_featured ? '24px' : '16px',
-                    }}
-                  >
-                    <div
-                      className="absolute inset-0 rounded-full"
-                      style={{
-                        backgroundColor: getCategoryColor(job.category),
-                        boxShadow: `0 0 ${isHovered ? '30px' : job.is_featured ? '20px' : '12px'} ${getCategoryColor(job.category)}`,
-                        animation: job.is_featured || isHovered ? 'pulse-gold 2s infinite' : 'none'
-                      }}
-                    />
-                    {(job.is_featured || isHovered) && (
-                      <div className="absolute inset-0 rounded-full border-2 border-primary animate-ping" />
-                    )}
-                  </div>
+                  <CompanyLogo
+                    company={job.company}
+                    size={job.is_featured ? 48 : 32}
+                    isHovered={isHovered}
+                  />
                 </motion.div>
               </Marker>
             );
@@ -260,7 +247,16 @@ export function MapView({ jobs, onJobClick }: MapViewProps) {
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                   onMouseEnter={() => handleCardHover(job)}
                   onMouseLeave={() => handleCardHover(null)}
-                  onClick={() => onJobClick?.(job)}
+                  onClick={() => {
+                    console.log('🎯 Job card clicked:', job.title);
+                    if (job.apply_url) {
+                      console.log('Opening:', job.apply_url);
+                      window.open(job.apply_url, '_blank', 'noopener,noreferrer');
+                    } else {
+                      console.warn('No apply_url for:', job.title);
+                    }
+                    onJobClick?.(job);
+                  }}
                 >
                   <div 
                     className={`bg-surface p-6 border transition-all duration-300 ${
