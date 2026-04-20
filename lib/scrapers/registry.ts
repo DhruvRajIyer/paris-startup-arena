@@ -15,6 +15,7 @@ export interface CompanyConfig {
   ats_slug: string;      // Slug used in the ATS URL
   db_slug: string;       // Slug in your companies table
   sector: string;
+  website?: string;      // Company website for logo fetching
 }
 
 export const PARIS_COMPANIES: CompanyConfig[] = [
@@ -25,14 +26,16 @@ export const PARIS_COMPANIES: CompanyConfig[] = [
     ats: 'greenhouse', 
     ats_slug: 'dataiku', 
     db_slug: 'dataiku', 
-    sector: 'DeepTech' 
+    sector: 'DeepTech',
+    website: 'https://dataiku.com'
   },
   { 
     name: 'Doctolib', 
     ats: 'greenhouse', 
     ats_slug: 'doctolib', 
     db_slug: 'doctolib', 
-    sector: 'HealthTech' 
+    sector: 'HealthTech',
+    website: 'https://doctolib.com'
   },
 
   // ── LEVER companies ──────────────────────────────────────────────
@@ -42,7 +45,8 @@ export const PARIS_COMPANIES: CompanyConfig[] = [
     ats: 'lever', 
     ats_slug: 'qonto', 
     db_slug: 'qonto', 
-    sector: 'FinTech' 
+    sector: 'FinTech',
+    website: 'https://qonto.com'
   },
   // Note: Alan slug needs verification - currently returns 404
   // { 
@@ -68,7 +72,8 @@ export const PARIS_COMPANIES: CompanyConfig[] = [
     ats: 'ashby', 
     ats_slug: 'photoroom', 
     db_slug: 'photoroom', 
-    sector: 'DeepTech' 
+    sector: 'DeepTech',
+    website: 'https://photoroom.com'
   },
 ];
 
