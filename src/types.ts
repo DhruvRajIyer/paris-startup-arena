@@ -2,10 +2,13 @@ export type Sector = 'DeepTech' | 'HealthTech' | 'FinTech' | 'CleanTech' | 'Food
 export type FundingStage = 'Seed' | 'Série A' | 'Série B' | 'Série C' | 'Coté';
 export type WorkMode = 'remote' | 'hybrid' | 'onsite';
 export type JobCategory = 'eng' | 'product' | 'design' | 'growth' | 'data' | 'ops';
+export type ContractType = 'cdi' | 'cdd' | 'stage' | 'alternance' | 'freelance';
+export type ExperienceLevel = 'intern' | 'junior' | 'mid' | 'senior';
 
 export interface Company {
   id: string;
   name: string;
+  slug?: string;
   sector: Sector;
   logo_initials?: string;
   logo_url?: string;
@@ -32,6 +35,8 @@ export interface Job {
   apply_url?: string;
   posted_at: string;
   is_featured: boolean;
+  contract_type?: ContractType;
+  experience_level?: ExperienceLevel;
 }
 
 export interface WaitlistEntry {

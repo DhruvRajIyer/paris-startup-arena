@@ -73,17 +73,22 @@ app.get('/api/companies', async (req, res) => {
 // GET /api/jobs
 app.get('/api/jobs', async (req, res) => {
   try {
-    const { company_id, category, work_mode, featured, limit = '50', offset = '0' } = req.query;
+    const {
+      company_id, category, work_mode, featured,
+      contract_type, experience_level,
+      limit = '200', offset = '0'
+    } = req.query;
 
     let query = supabase
       .from('jobs')
       .select(`
         id, title, category, tags, salary_min, salary_max,
         salary_currency, work_mode, description, requirements,
-        apply_url, is_featured, posted_at, expires_at,
+        apply_url, source_id, is_featured, posted_at, expires_at,
+        contract_type, experience_level,
         companies (
           id, name, slug, sector, logo_initials, logo_url,
-          lat, lng, arrondissement, funding_stage
+          lat, lng, arrondissement, funding_stage, website
         )
       `)
       .eq('is_active', true)
@@ -95,12 +100,14 @@ app.get('/api/jobs', async (req, res) => {
     if (category) query = query.eq('category', category);
     if (work_mode) query = query.eq('work_mode', work_mode);
     if (featured === 'true') query = query.eq('is_featured', true);
+    if (contract_type) query = query.eq('contract_type', contract_type);
+    if (experience_level) query = query.eq('experience_level', experience_level);
 
     const { data, error } = await query;
 
     if (error) throw error;
 
-    res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=7200');
+    res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=120');
     res.json({
       jobs: data || [],
       total: data?.length || 0,
@@ -110,6 +117,77 @@ app.get('/api/jobs', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching jobs:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /api/jobs/:id - Single job detail
+app.get('/api/jobs/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { data, error } = await supabase
+      .from('jobs')
+      .select(`
+        id, title, category, tags, salary_min, salary_max,
+        salary_currency, work_mode, description, requirements,
+        apply_url, is_featured, posted_at, expires_at,
+        contract_type, experience_level,
+        companies (
+          id, name, slug, sector, logo_initials, logo_url,
+          lat, lng, arrondissement, funding_stage, website, description
+        )
+      `)
+      .eq('id', id)
+      .eq('is_active', true)
+      .single();
+
+    if (error) throw error;
+    if (!data) return res.status(404).json({ error: 'Job not found' });
+
+    res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching job:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /api/companies/:slug - Company profile + open roles
+app.get('/api/companies/:slug', async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const { data: company, error: companyError } = await supabase
+      .from('companies')
+      .select(`
+        id, name, slug, sector, logo_initials, logo_url,
+        lat, lng, arrondissement, funding_stage, website,
+        description, employee_count
+      `)
+      .eq('slug', slug)
+      .eq('is_active', true)
+      .single();
+
+    if (companyError) throw companyError;
+    if (!company) return res.status(404).json({ error: 'Company not found' });
+
+    const { data: jobs, error: jobsError } = await supabase
+      .from('jobs')
+      .select(`
+        id, title, category, tags, salary_min, salary_max,
+        work_mode, apply_url, is_featured, posted_at,
+        contract_type, experience_level
+      `)
+      .eq('company_id', company.id)
+      .eq('is_active', true)
+      .order('is_featured', { ascending: false })
+      .order('posted_at', { ascending: false });
+
+    if (jobsError) throw jobsError;
+
+    res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+    res.json({ company, jobs: jobs || [] });
+  } catch (error) {
+    console.error('Error fetching company:', error);
     res.status(500).json({ error: error.message });
   }
 });

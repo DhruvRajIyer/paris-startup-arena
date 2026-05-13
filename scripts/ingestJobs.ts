@@ -1,3 +1,6 @@
+// Deprecated — use `npx tsx scripts/sync.ts` instead.
+// This file is kept for reference only and does nothing.
+
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 

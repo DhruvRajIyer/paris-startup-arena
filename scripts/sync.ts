@@ -12,6 +12,7 @@ import { scrapeGreenhouse } from '../lib/scrapers/greenhouse.js';
 import { scrapeLever } from '../lib/scrapers/lever.js';
 import { scrapeAshby } from '../lib/scrapers/ashby.js';
 import type { JobInsert } from '../lib/scrapers/greenhouse.js';
+import { classifyContractType, classifyExperienceLevel } from '../lib/scrapers/classifier.js';
 
 dotenv.config();
 
@@ -139,6 +140,9 @@ async function upsertJob(job: JobInsert, stats: { inserted: number; updated: num
     stats.updated++;
   } else {
     // Insert new job
+    const contract_type = classifyContractType(job.title, job.description ?? '');
+    const experience_level = classifyExperienceLevel(job.title, job.tags ?? [], job.description ?? '');
+
     const { error } = await supabase
       .from('jobs')
       .insert({
@@ -156,6 +160,8 @@ async function upsertJob(job: JobInsert, stats: { inserted: number; updated: num
         source_id: job.source_id,
         posted_at: job.posted_at,
         expires_at: job.expires_at,
+        contract_type,
+        experience_level,
         is_active: true,
       });
 

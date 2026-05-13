@@ -105,7 +105,7 @@ export function CompanyLogo({
         className="absolute inset-0 transition-all duration-300"
         style={{
           transform: isHovered 
-            ? 'perspective(1000px) rotateX(15deg) rotateY(-15deg) translateZ(30px) scale(1.2)' 
+            ? 'perspective(1000px) rotateX(15deg) rotateY(-15deg) translateZ(40px) scale(1.35)' 
             : 'perspective(1000px) rotateX(10deg) rotateY(-10deg) translateZ(20px)',
           transformStyle: 'preserve-3d',
         }}
@@ -115,7 +115,7 @@ export function CompanyLogo({
           className="absolute inset-0 rounded-xl overflow-hidden"
           style={{
             background: 'linear-gradient(135deg, rgba(30, 30, 30, 0.95) 0%, rgba(20, 20, 20, 0.98) 100%)',
-            border: '2px solid rgba(200, 169, 110, 0.3)',
+            border: '3px solid rgba(200, 169, 110, 0.45)',
             boxShadow: isHovered
               ? '0 20px 40px rgba(0,0,0,0.5), 0 2px 12px rgba(200, 169, 110, 0.4), inset 0 1px 0 rgba(255,255,255,0.1)'
               : '0 10px 30px rgba(0,0,0,0.3), 0 1px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05)',

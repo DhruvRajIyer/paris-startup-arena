@@ -20,60 +20,169 @@ export interface CompanyConfig {
 
 export const PARIS_COMPANIES: CompanyConfig[] = [
   // ── GREENHOUSE companies ──────────────────────────────────────────
-  // Verify at: https://boards.greenhouse.io/{slug}
-  { 
-    name: 'Dataiku', 
-    ats: 'greenhouse', 
-    ats_slug: 'dataiku', 
-    db_slug: 'dataiku', 
+  {
+    name: 'Dataiku',
+    ats: 'greenhouse',
+    ats_slug: 'dataiku',
+    db_slug: 'dataiku',
     sector: 'DeepTech',
     website: 'https://dataiku.com'
   },
-  { 
-    name: 'Doctolib', 
-    ats: 'greenhouse', 
-    ats_slug: 'doctolib', 
-    db_slug: 'doctolib', 
+  {
+    name: 'Doctolib',
+    ats: 'greenhouse',
+    ats_slug: 'doctolib',
+    db_slug: 'doctolib',
     sector: 'HealthTech',
     website: 'https://doctolib.com'
   },
+  {
+    name: 'Alan',
+    ats: 'ashby',
+    ats_slug: 'alan',
+    db_slug: 'alan',
+    sector: 'HealthTech',
+    website: 'https://alan.com'
+  },
+  {
+    name: 'Ledger',
+    ats: 'greenhouse',
+    ats_slug: 'ledgerhq',
+    db_slug: 'ledger',
+    sector: 'DeepTech',
+    website: 'https://ledger.com'
+  },
+  {
+    name: 'Contentsquare',
+    ats: 'lever',
+    ats_slug: 'contentsquare',
+    db_slug: 'contentsquare',
+    sector: 'SaaS',
+    website: 'https://contentsquare.com'
+  },
+  {
+    name: 'Spendesk',
+    ats: 'lever',
+    ats_slug: 'spendesk',
+    db_slug: 'spendesk',
+    sector: 'FinTech',
+    website: 'https://spendesk.com'
+  },
+  {
+    name: 'Aircall',
+    ats: 'lever',
+    ats_slug: 'aircall',
+    db_slug: 'aircall',
+    sector: 'SaaS',
+    website: 'https://aircall.io'
+  },
+  {
+    name: 'Algolia',
+    ats: 'greenhouse',
+    ats_slug: 'algolia',
+    db_slug: 'algolia',
+    sector: 'DeepTech',
+    website: 'https://algolia.com'
+  },
+  {
+    name: 'Exotec',
+    ats: 'ashby',
+    ats_slug: 'exotec',
+    db_slug: 'exotec',
+    sector: 'DeepTech',
+    website: 'https://exotec.com'
+  },
 
   // ── LEVER companies ──────────────────────────────────────────────
-  // Verify at: https://jobs.lever.co/{slug}
-  { 
-    name: 'Qonto', 
-    ats: 'lever', 
-    ats_slug: 'qonto', 
-    db_slug: 'qonto', 
+  {
+    name: 'Qonto',
+    ats: 'lever',
+    ats_slug: 'qonto',
+    db_slug: 'qonto',
     sector: 'FinTech',
     website: 'https://qonto.com'
   },
-  // Note: Alan slug needs verification - currently returns 404
-  // { 
-  //   name: 'Alan', 
-  //   ats: 'lever', 
-  //   ats_slug: 'alan', 
-  //   db_slug: 'alan', 
-  //   sector: 'HealthTech' 
-  // },
+  {
+    name: 'BlaBlaCar',
+    ats: 'lever',
+    ats_slug: 'blablacar',
+    db_slug: 'blablacar',
+    sector: 'MarketPlace',
+    website: 'https://blablacar.com'
+  },
+  {
+    name: 'Pennylane',
+    ats: 'lever',
+    ats_slug: 'pennylane',
+    db_slug: 'pennylane',
+    sector: 'FinTech',
+    website: 'https://pennylane.com'
+  },
+  {
+    name: 'Back Market',
+    ats: 'ashby',
+    ats_slug: 'backmarket',
+    db_slug: 'back-market',
+    sector: 'CleanTech',
+    website: 'https://backmarket.fr'
+  },
+  {
+    name: 'Swile',
+    ats: 'lever',
+    ats_slug: 'swile',
+    db_slug: 'swile',
+    sector: 'HRTech',
+    website: 'https://swile.co'
+  },
+  {
+    name: 'PayFit',
+    ats: 'ashby',
+    ats_slug: 'payfit',
+    db_slug: 'payfit',
+    sector: 'HRTech',
+    website: 'https://payfit.com'
+  },
+  {
+    name: 'Dashlane',
+    ats: 'greenhouse',
+    ats_slug: 'dashlane',
+    db_slug: 'dashlane',
+    sector: 'DeepTech',
+    website: 'https://dashlane.com'
+  },
 
   // ── ASHBY companies ──────────────────────────────────────────────
-  // Verify at: https://jobs.ashbyhq.com/{slug}
-  // Note: Mistral AI slug needs verification - currently returns 404
-  // { 
-  //   name: 'Mistral AI', 
-  //   ats: 'ashby', 
-  //   ats_slug: 'mistral', 
-  //   db_slug: 'mistral-ai', 
-  //   sector: 'DeepTech' 
-  // },
-  { 
-    name: 'Photoroom', 
-    ats: 'ashby', 
-    ats_slug: 'photoroom', 
-    db_slug: 'photoroom', 
+  {
+    name: 'Photoroom',
+    ats: 'ashby',
+    ats_slug: 'photoroom',
+    db_slug: 'photoroom',
     sector: 'DeepTech',
     website: 'https://photoroom.com'
+  },
+  {
+    name: 'Mistral AI',
+    ats: 'lever',
+    ats_slug: 'mistral',
+    db_slug: 'mistral-ai',
+    sector: 'DeepTech',
+    website: 'https://mistral.ai'
+  },
+  {
+    name: 'Pigment',
+    ats: 'ashby',
+    ats_slug: 'pigmenthq',
+    db_slug: 'pigment',
+    sector: 'SaaS',
+    website: 'https://pigment.com'
+  },
+  {
+    name: 'Lempire',
+    ats: 'lever',
+    ats_slug: 'lempire',
+    db_slug: 'lempire',
+    sector: 'SaaS',
+    website: 'https://lempire.com'
   },
 ];
 

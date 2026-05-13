@@ -50,11 +50,33 @@ export function mapCategory(department?: string): string {
   
   const dept = department.toLowerCase();
   
-  if (dept.includes('engineer') || dept.includes('dev') || dept.includes('tech')) return 'eng';
+  if (
+    dept.includes('engineer') || dept.includes('dev') || dept.includes('tech') ||
+    dept.includes('security') || dept.includes('infra') || dept.includes('cloud') ||
+    dept.includes('devops') || dept.includes('platform') || dept.includes('research') ||
+    dept.includes('science') || dept.includes('ml') || dept.includes('ai') ||
+    dept.includes('software') || dept.includes('backend') || dept.includes('frontend') ||
+    dept.includes('fullstack') || dept.includes('mobile') || dept.includes('embedded')
+  ) return 'eng';
+
   if (dept.includes('product')) return 'product';
-  if (dept.includes('design') || dept.includes('ux') || dept.includes('ui')) return 'design';
-  if (dept.includes('market') || dept.includes('growth') || dept.includes('sales')) return 'growth';
-  if (dept.includes('data') || dept.includes('analyt')) return 'data';
+
+  if (
+    dept.includes('design') || dept.includes('ux') || dept.includes('ui') ||
+    dept.includes('brand') || dept.includes('creative') || dept.includes('visual')
+  ) return 'design';
+
+  if (
+    dept.includes('market') || dept.includes('growth') || dept.includes('sales') ||
+    dept.includes('revenue') || dept.includes('partner') || dept.includes('business dev') ||
+    dept.includes('content') || dept.includes('seo') || dept.includes('communication') ||
+    dept.includes('pr ') || dept.includes('public relation')
+  ) return 'growth';
+
+  if (
+    dept.includes('data') || dept.includes('analyt') || dept.includes('insight') ||
+    dept.includes('bi ') || dept.includes('business intel')
+  ) return 'data';
   
   return 'ops';
 }
