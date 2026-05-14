@@ -19,70 +19,121 @@ interface HeroProps {
 
 export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [loaded, setLoaded] = useState(0);
   const reduceMotion = useReducedMotion();
 
-  // Scroll progress spans the entire tall hero section (220vh).
+  // Preloaded bitmap cache — drawn directly to canvas, zero DOM thrashing.
+  const bitmaps = useRef<(ImageBitmap | HTMLImageElement | null)[]>(
+    new Array(FRAME_COUNT).fill(null)
+  );
+  const currentFrame = useRef(0);
+
+  // Direct scroll progress — NO spring on frame scrubbing.
+  // Spring causes lag between finger and frame = patchy feel.
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end end'],
   });
 
-  // Spring-smooth the raw scroll so frames ease into place instead of snapping.
+  // Spring ONLY for UI overlays (title, opacity) — not frames.
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 28,
-    mass: 0.6,
-    restDelta: 0.0005,
+    stiffness: 200,
+    damping: 40,
+    mass: 0.4,
+    restDelta: 0.001,
   });
 
-  // Title copy fades out within the first third of scroll, never fighting the dissolve.
   const titleOpacity = useTransform(smoothProgress, [0, 0.3], [1, 0]);
   const titleY = useTransform(smoothProgress, [0, 0.5], ['0%', '-30%']);
-
-  // The frame canvas breathes in at start, holds, and gently recedes into section B.
-  const canvasScale = useTransform(smoothProgress, [0, 0.4, 1], [0.94, 1, 1.03]);
-  const canvasOpacity = useTransform(
-    smoothProgress,
-    [0, 0.08, 0.9, 1],
-    [0.6, 1, 1, 0.8]
-  );
-  // Whole section lifts slightly at the end to blend into what's below.
+  const canvasOpacity = useTransform(smoothProgress, [0, 0.08, 0.9, 1], [0.7, 1, 1, 0.85]);
   const containerY = useTransform(smoothProgress, [0.85, 1], ['0%', '-5%']);
 
-  // Mouse-driven 3D parallax — springs smooth the motion.
+  // Mouse-driven 3D parallax — springs only here.
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const rotateY = useSpring(
-    useTransform(mouseX, [-0.5, 0.5], [8, -8]),
-    { stiffness: 80, damping: 22, mass: 0.6 }
+    useTransform(mouseX, [-0.5, 0.5], [6, -6]),
+    { stiffness: 60, damping: 20, mass: 0.5 }
   );
   const rotateX = useSpring(
-    useTransform(mouseY, [-0.5, 0.5], [-6, 6]),
-    { stiffness: 80, damping: 22, mass: 0.6 }
+    useTransform(mouseY, [-0.5, 0.5], [-4, 4]),
+    { stiffness: 60, damping: 20, mass: 0.5 }
   );
   const translateZ = useSpring(0, { stiffness: 60, damping: 18 });
 
-  // Preload every frame so scroll scrubbing never flickers.
+  // Draw a frame index to canvas.
+  const drawFrame = (idx: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const bmp = bitmaps.current[idx];
+    if (!bmp) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    // Cover-fit: scale to fill canvas preserving aspect ratio.
+    const cw = canvas.width;
+    const ch = canvas.height;
+    const sw = bmp instanceof ImageBitmap ? bmp.width : (bmp as HTMLImageElement).naturalWidth;
+    const sh = bmp instanceof ImageBitmap ? bmp.height : (bmp as HTMLImageElement).naturalHeight;
+    const scale = Math.max(cw / sw, ch / sh);
+    const dw = sw * scale;
+    const dh = sh * scale;
+    const dx = (cw - dw) / 2;
+    const dy = (ch - dh) / 2;
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.drawImage(bmp as CanvasImageSource, dx, dy, dw, dh);
+  };
+
+  // Resize canvas to match device pixel ratio for crisp rendering.
   useEffect(() => {
-    let cancelled = false;
-    for (let i = 1; i <= FRAME_COUNT; i++) {
-      const img = new Image();
-      img.decoding = 'async';
-      img.src = framePath(i);
-      const done = () => {
-        if (!cancelled) setLoaded((n) => n + 1);
-      };
-      img.onload = done;
-      img.onerror = done;
-    }
-    return () => {
-      cancelled = true;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const resize = () => {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      drawFrame(currentFrame.current);
     };
+    resize();
+    window.addEventListener('resize', resize);
+    return () => window.removeEventListener('resize', resize);
   }, []);
 
-  // Smoothed scroll → frame index scrubbing via rAF-throttled updates.
+  // Preload all frames as ImageBitmap (GPU-ready, instant draw).
+  useEffect(() => {
+    let cancelled = false;
+    const load = async (i: number) => {
+      try {
+        const res = await fetch(framePath(i + 1));
+        const blob = await res.blob();
+        if (cancelled) return;
+        if (typeof createImageBitmap !== 'undefined') {
+          const bmp = await createImageBitmap(blob);
+          if (!cancelled) {
+            bitmaps.current[i] = bmp;
+            if (i === 0) drawFrame(0);
+          }
+        } else {
+          // Safari fallback: HTMLImageElement
+          const img = new Image();
+          img.src = URL.createObjectURL(blob);
+          await new Promise((res) => { img.onload = img.onerror = res; });
+          if (!cancelled) {
+            bitmaps.current[i] = img;
+            if (i === 0) drawFrame(0);
+          }
+        }
+      } catch { /* silent */ }
+      if (!cancelled) setLoaded((n) => n + 1);
+    };
+    // Load first 10 frames immediately, rest async in background.
+    for (let i = 0; i < FRAME_COUNT; i++) load(i);
+    return () => { cancelled = true; };
+  }, []);
+
+  // DIRECT scroll → frame draw. No spring, no DOM src swap.
   useEffect(() => {
     let raf = 0;
     let pending = -1;
@@ -90,39 +141,41 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
     const apply = () => {
       raf = 0;
       if (pending < 0) return;
-      const img = imgRef.current;
-      if (!img) return;
-      const src = framePath(pending + 1);
-      if (img.getAttribute('src') !== src) img.setAttribute('src', src);
+      if (bitmaps.current[pending]) {
+        currentFrame.current = pending;
+        drawFrame(pending);
+      } else {
+        // Frame not loaded yet — find nearest loaded frame
+        let nearest = pending;
+        for (let d = 1; d < FRAME_COUNT; d++) {
+          if (pending - d >= 0 && bitmaps.current[pending - d]) { nearest = pending - d; break; }
+          if (pending + d < FRAME_COUNT && bitmaps.current[pending + d]) { nearest = pending + d; break; }
+        }
+        currentFrame.current = nearest;
+        drawFrame(nearest);
+      }
+      pending = -1;
     };
 
-    const unsub = smoothProgress.on('change', (p) => {
-      const idx = Math.min(
-        FRAME_COUNT - 1,
-        Math.max(0, Math.round(p * (FRAME_COUNT - 1)))
-      );
-      if (idx === pending) return;
+    // Use raw scrollYProgress (not spring) for 1:1 finger tracking.
+    const unsub = scrollYProgress.on('change', (p) => {
+      const idx = Math.min(FRAME_COUNT - 1, Math.max(0, Math.round(p * (FRAME_COUNT - 1))));
+      if (idx === currentFrame.current && pending === -1) return;
       pending = idx;
       if (!raf) raf = requestAnimationFrame(apply);
     });
 
-    return () => {
-      unsub();
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [smoothProgress]);
+    return () => { unsub(); if (raf) cancelAnimationFrame(raf); };
+  }, [scrollYProgress]);
 
-  // Mouse tracking for the 3D parallax tilt.
+  // Mouse tracking.
   useEffect(() => {
     if (reduceMotion) return;
     const handle = (e: MouseEvent) => {
       mouseX.set(e.clientX / window.innerWidth - 0.5);
       mouseY.set(e.clientY / window.innerHeight - 0.5);
     };
-    const leave = () => {
-      mouseX.set(0);
-      mouseY.set(0);
-    };
+    const leave = () => { mouseX.set(0); mouseY.set(0); };
     window.addEventListener('mousemove', handle);
     window.addEventListener('mouseleave', leave);
     return () => {
@@ -131,11 +184,8 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
     };
   }, [mouseX, mouseY, reduceMotion]);
 
-  // Scroll-linked depth push — gentle forward motion as dissolve progresses.
   useEffect(() => {
-    const unsub = smoothProgress.on('change', (p) => {
-      translateZ.set(p * 40);
-    });
+    const unsub = smoothProgress.on('change', (p) => { translateZ.set(p * 30); });
     return unsub;
   }, [smoothProgress, translateZ]);
 
@@ -151,23 +201,20 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
           style={{ perspective: '1200px', perspectiveOrigin: '50% 50%' }}
         >
           <motion.div
-            className="absolute inset-0 flex items-center justify-center"
+            className="absolute inset-0"
             style={{
               rotateX: reduceMotion ? 0 : rotateX,
               rotateY: reduceMotion ? 0 : rotateY,
               z: reduceMotion ? 0 : translateZ,
-              scale: canvasScale,
               opacity: canvasOpacity,
               transformStyle: 'preserve-3d',
               willChange: 'transform, opacity',
             }}
           >
-            <img
-              ref={imgRef}
-              src={framePath(1)}
-              alt="Paris map dissolving into golden particles"
-              className="w-full h-full object-cover select-none pointer-events-none"
-              draggable={false}
+            <canvas
+              ref={canvasRef}
+              className="absolute inset-0 select-none pointer-events-none"
+              style={{ imageRendering: 'auto' }}
             />
           </motion.div>
 
