@@ -168,7 +168,7 @@ export default function App() {
 
       {/* Nav */}
       <motion.nav
-        className={`fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-8 py-5 transition-all duration-500 ${
+        className={`fixed top-0 w-full z-50 grid grid-cols-3 items-center px-4 md:px-8 py-5 transition-all duration-500 ${
           isScrolled
             ? 'bg-surface/95 backdrop-blur-md border-b border-outline-variant/30 py-4'
             : 'bg-transparent backdrop-blur-sm border-b border-outline-variant/10'
@@ -184,12 +184,12 @@ export default function App() {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-          <span className="text-lg font-light tracking-widest text-[#E8DFC8] font-headline uppercase">Paris Startup Arena</span>
+          <span className="text-xl font-light tracking-widest text-on-surface font-headline uppercase">Paris Startup Arena</span>
         </motion.div>
 
-        {/* Desktop links */}
+        {/* Desktop links — col 2, truly centred */}
         <motion.div
-          className="hidden md:flex gap-10 items-center"
+          className="hidden md:flex gap-10 items-center justify-center"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
@@ -198,7 +198,7 @@ export default function App() {
             <motion.a
               key={item.label}
               href={item.href}
-              className="text-[#9A9282] hover:text-[#E8DFC8] transition-colors duration-300 font-label text-[10px] uppercase tracking-[0.15em]"
+              className="text-on-surface-variant hover:text-on-surface transition-colors duration-300 font-label text-[11px] uppercase tracking-[0.18em]"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.4 + i * 0.05 }}
@@ -209,7 +209,7 @@ export default function App() {
           ))}
         </motion.div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 justify-end">
           <motion.button
             className={`bg-primary text-surface font-label text-[10px] px-6 py-2 uppercase tracking-widest hover:bg-on-surface transition-all duration-300 ${!isScrolled ? 'ring-1 ring-primary/50' : ''}`}
             initial={{ opacity: 0, x: 20 }}
@@ -342,7 +342,7 @@ export default function App() {
             />
 
             <motion.p
-              className="font-headline italic text-xl text-on-surface-variant mb-12 max-w-2xl mx-auto"
+              className="font-headline italic text-2xl text-on-surface mb-12 max-w-2xl mx-auto"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
@@ -365,7 +365,7 @@ export default function App() {
                     <span className="material-symbols-outlined text-primary text-xl">check</span>
                   </div>
                   <p className="font-label text-[11px] uppercase tracking-[0.25em] text-primary">You're on the list</p>
-                  <p className="font-headline italic text-on-surface-variant text-lg">We'll be in touch soon.</p>
+                  <p className="font-headline italic text-on-surface text-xl">We'll be in touch soon.</p>
                 </motion.div>
               ) : (
                 <motion.form
@@ -380,7 +380,7 @@ export default function App() {
                   <label htmlFor="waitlist-email" className="sr-only">Email address</label>
                   <motion.input
                     id="waitlist-email"
-                    className="flex-1 h-[52px] bg-surface-container-low border border-outline-variant px-6 font-label text-[11px] uppercase tracking-widest focus:ring-1 focus:ring-primary focus:border-primary text-on-surface outline-none disabled:opacity-50 placeholder:text-tertiary/70"
+                    className="flex-1 h-[52px] bg-surface-container-low border border-outline-variant px-6 font-label text-[11px] uppercase tracking-widest focus:ring-1 focus:ring-primary focus:border-primary text-on-surface outline-none disabled:opacity-50 placeholder:text-on-surface-variant/60"
                     placeholder="YOUR EMAIL ADDRESS"
                     type="email"
                     value={waitlistEmail}

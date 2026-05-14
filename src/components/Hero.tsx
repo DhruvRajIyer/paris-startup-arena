@@ -147,14 +147,16 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
           />
         </motion.div>
 
-        {/* Oval vignette */}
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_55%_at_50%_50%,_transparent_30%,_rgba(6,6,4,0.92)_100%)]" />
-        {/* Centre scrim */}
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_50%_42%_at_50%_50%,_rgba(6,6,4,0.52)_0%,_transparent_100%)]" />
+        {/* Full dark overlay — base readability layer */}
+        <div className="absolute inset-0 pointer-events-none bg-surface/40" />
+        {/* Oval vignette — darkens edges */}
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_65%_60%_at_50%_50%,_transparent_20%,_rgba(6,6,4,0.94)_100%)]" />
+        {/* Centre scrim — strong dark pill behind text */}
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_55%_48%_at_50%_50%,_rgba(6,6,4,0.72)_0%,_transparent_100%)]" />
         {/* Top fade */}
-        <div className="absolute inset-x-0 top-0 h-40 pointer-events-none bg-gradient-to-b from-surface/90 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-40 pointer-events-none bg-gradient-to-b from-surface to-transparent" />
         {/* Bottom fade */}
-        <div className="absolute inset-x-0 bottom-0 h-[35vh] pointer-events-none bg-gradient-to-b from-transparent via-surface/70 to-surface" />
+        <div className="absolute inset-x-0 bottom-0 h-[35vh] pointer-events-none bg-gradient-to-b from-transparent via-surface/80 to-surface" />
 
         {/* Content block */}
         <motion.div
@@ -162,7 +164,7 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
           style={{ opacity: titleOpacity, y: titleY }}
         >
           <motion.p
-            className="font-label text-[9px] uppercase tracking-[0.35em] text-primary/90 mb-6"
+            className="font-label text-[10px] uppercase tracking-[0.4em] text-primary mb-6 drop-shadow-[0_1px_8px_rgba(0,0,0,1)]"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: 'easeOut' }}
@@ -171,15 +173,15 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
           </motion.p>
 
           <motion.h1
-            className="font-headline leading-[0.88] text-on-surface drop-shadow-[0_2px_48px_rgba(0,0,0,0.98)]"
-            style={{ fontSize: 'clamp(3.2rem, 9vw, 8rem)', letterSpacing: '0.05em', textShadow: '0 0 60px rgba(6,6,4,0.9), 0 4px 24px rgba(0,0,0,0.8)' }}
+            className="font-headline leading-[0.88] text-on-surface"
+            style={{ fontSize: 'clamp(3.2rem, 9vw, 8rem)', letterSpacing: '0.05em', textShadow: '0 2px 4px rgba(0,0,0,1), 0 0 80px rgba(6,6,4,1), 0 4px 32px rgba(0,0,0,1)' }}
             initial={{ opacity: 0, y: 36 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           >
             PARIS
             <br />
-            <span className="italic text-primary" style={{ fontWeight: 200, fontSize: '1.08em', letterSpacing: '0.03em' }}>
+            <span className="italic text-primary" style={{ fontWeight: 200, fontSize: '1.08em', letterSpacing: '0.03em', textShadow: '0 2px 4px rgba(0,0,0,1), 0 0 60px rgba(0,0,0,1)' }}>
               Startup
             </span>
             <br />
@@ -187,8 +189,8 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
           </motion.h1>
 
           <motion.p
-            className="font-headline italic text-on-surface/90 mt-5 drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)]"
-            style={{ fontSize: 'clamp(0.9rem, 1.6vw, 1.2rem)' }}
+            className="font-headline italic text-on-surface mt-5"
+            style={{ fontSize: 'clamp(1rem, 1.8vw, 1.35rem)', textShadow: '0 1px 3px rgba(0,0,0,1), 0 0 40px rgba(0,0,0,0.9)' }}
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.36, ease: 'easeOut' }}
@@ -222,13 +224,13 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
                 transition={{ duration: 0.5, delay: 0.62 + i * 0.12, ease: 'easeOut' }}
               >
                 {stat.value === -1 ? (
-                  <span className="font-headline italic text-primary text-2xl leading-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">∞</span>
+                  <span className="font-headline italic text-primary text-3xl leading-none" style={{ textShadow: '0 2px 12px rgba(0,0,0,1)' }}>∞</span>
                 ) : stat.value === 0 ? (
                   <span className="w-10 h-5 rounded bg-primary/20 animate-pulse inline-block" />
                 ) : (
-                  <span className="font-headline italic text-primary text-2xl leading-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">{stat.value}</span>
+                  <span className="font-headline italic text-primary text-3xl leading-none" style={{ textShadow: '0 2px 12px rgba(0,0,0,1)' }}>{stat.value}</span>
                 )}
-                <span className="font-label text-[10px] uppercase tracking-[0.25em] text-on-surface-variant/90">{stat.label}</span>
+                <span className="font-label text-[11px] uppercase tracking-[0.25em] text-on-surface drop-shadow-[0_1px_6px_rgba(0,0,0,1)]">{stat.label}</span>
               </motion.div>
             ))}
           </motion.div>
@@ -244,7 +246,7 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
         >
           <div className="flex items-center gap-4">
             <div className="w-12 h-px bg-primary/50" />
-            <span className="font-label text-[10px] uppercase tracking-[0.32em] text-on-surface-variant/70">Scroll to Observe</span>
+            <span className="font-label text-[10px] uppercase tracking-[0.32em] text-on-surface/60 drop-shadow-[0_1px_6px_rgba(0,0,0,1)]">Scroll to Observe</span>
             <div className="w-12 h-px bg-primary/50" />
           </div>
           <div className="w-[1px] h-10 bg-gradient-to-b from-primary/0 via-primary/60 to-primary/0 animate-bob mt-1" />
@@ -258,13 +260,13 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
           transition={{ duration: 0.6, delay: 1.4 }}
         >
           <div className="w-2 h-2 rounded-full bg-primary pulse-gold" />
-          <span className="font-label text-[9px] uppercase tracking-[0.3em] text-on-surface-variant">Live</span>
+          <span className="font-label text-[10px] uppercase tracking-[0.3em] text-on-surface">Live</span>
           {jobCount > 0 && (
             <>
-              <span className="font-label text-[9px] text-tertiary/60">·</span>
-              <span className="font-label text-[9px] uppercase tracking-[0.25em] text-primary/80">{jobCount} Roles</span>
-              <span className="font-label text-[9px] text-tertiary/60">·</span>
-              <span className="font-label text-[9px] uppercase tracking-[0.25em] text-on-surface-variant/70">{companyCount} Startups</span>
+              <span className="font-label text-[10px] text-primary/50">·</span>
+              <span className="font-label text-[10px] uppercase tracking-[0.25em] text-primary">{jobCount} Roles</span>
+              <span className="font-label text-[10px] text-primary/50">·</span>
+              <span className="font-label text-[10px] uppercase tracking-[0.25em] text-on-surface-variant">{companyCount} Startups</span>
             </>
           )}
         </motion.div>
