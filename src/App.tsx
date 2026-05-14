@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from 'motion/react';
+import { Analytics } from '@vercel/analytics/react';
 import { Hero } from "./components/Hero";
 import { FilterShelf, FilterState } from "./components/FilterShelf";
 import { MapView } from "./components/MapView";
@@ -468,6 +469,7 @@ export default function App() {
           </motion.div>
         </motion.footer>
       </main>
+      <Analytics />
     </div>
   );
 }
