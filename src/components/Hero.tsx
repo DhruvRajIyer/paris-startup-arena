@@ -9,6 +9,8 @@ import {
 import { useRef, useEffect, useState } from 'react';
 
 const FRAME_COUNT = 192;
+const PRIORITY_FRAMES = 24; // Load these first before firing background loads
+const FADE_MS = 70; // Cross-fade duration between frames in ms
 const framePath = (i: number) =>
   `/hero-frames/frame_${String(i).padStart(3, '0')}.webp`;
 
@@ -19,58 +21,49 @@ interface HeroProps {
 
 export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  // A/B canvas pair for cross-fading between frames
+  const canvasARef = useRef<HTMLCanvasElement>(null);
+  const canvasBRef = useRef<HTMLCanvasElement>(null);
+  const activeCanvas = useRef<'A' | 'B'>('A');
+  const fadeRaf = useRef(0);
   const [loaded, setLoaded] = useState(0);
   const reduceMotion = useReducedMotion();
 
-  // Preloaded bitmap cache — drawn directly to canvas, zero DOM thrashing.
   const bitmaps = useRef<(ImageBitmap | HTMLImageElement | null)[]>(
     new Array(FRAME_COUNT).fill(null)
   );
   const currentFrame = useRef(0);
 
-  // Direct scroll progress — NO spring on frame scrubbing.
-  // Spring causes lag between finger and frame = patchy feel.
+  // Direct scroll — no spring on frames.
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end end'],
   });
 
-  // Spring ONLY for UI overlays (title, opacity) — not frames.
+  // Spring only for UI overlays.
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 200,
-    damping: 40,
-    mass: 0.4,
+    stiffness: 220,
+    damping: 42,
+    mass: 0.35,
     restDelta: 0.001,
   });
 
-  const titleOpacity = useTransform(smoothProgress, [0, 0.3], [1, 0]);
-  const titleY = useTransform(smoothProgress, [0, 0.5], ['0%', '-30%']);
-  const canvasOpacity = useTransform(smoothProgress, [0, 0.08, 0.9, 1], [0.7, 1, 1, 0.85]);
-  const containerY = useTransform(smoothProgress, [0.85, 1], ['0%', '-5%']);
+  // Adjusted for shorter 154vh scroll
+  const titleOpacity = useTransform(smoothProgress, [0, 0.4], [1, 0]);
+  const titleY = useTransform(smoothProgress, [0, 0.6], ['0%', '-25%']);
+  const canvasOpacity = useTransform(smoothProgress, [0, 0.06, 0.88, 1], [0.7, 1, 1, 0.85]);
+  const containerY = useTransform(smoothProgress, [0.8, 1], ['0%', '-5%']);
 
-  // Mouse-driven 3D parallax — springs only here.
+  // Mouse parallax — subtle, no tilt on canvas itself
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const rotateY = useSpring(
-    useTransform(mouseX, [-0.5, 0.5], [6, -6]),
-    { stiffness: 60, damping: 20, mass: 0.5 }
-  );
-  const rotateX = useSpring(
-    useTransform(mouseY, [-0.5, 0.5], [-4, 4]),
-    { stiffness: 60, damping: 20, mass: 0.5 }
-  );
-  const translateZ = useSpring(0, { stiffness: 60, damping: 18 });
+  const parallaxX = useSpring(useTransform(mouseX, [-0.5, 0.5], [-12, 12]), { stiffness: 50, damping: 18 });
+  const parallaxY = useSpring(useTransform(mouseY, [-0.5, 0.5], [-8, 8]), { stiffness: 50, damping: 18 });
 
-  // Draw a frame index to canvas.
-  const drawFrame = (idx: number) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const bmp = bitmaps.current[idx];
-    if (!bmp) return;
+  // Draw bitmap onto a specific canvas, cover-fit.
+  const drawTo = (canvas: HTMLCanvasElement, bmp: ImageBitmap | HTMLImageElement) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    // Cover-fit: scale to fill canvas preserving aspect ratio.
     const cw = canvas.width;
     const ch = canvas.height;
     const sw = bmp instanceof ImageBitmap ? bmp.width : (bmp as HTMLImageElement).naturalWidth;
@@ -78,62 +71,121 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
     const scale = Math.max(cw / sw, ch / sh);
     const dw = sw * scale;
     const dh = sh * scale;
-    const dx = (cw - dw) / 2;
-    const dy = (ch - dh) / 2;
     ctx.clearRect(0, 0, cw, ch);
-    ctx.drawImage(bmp as CanvasImageSource, dx, dy, dw, dh);
+    ctx.drawImage(bmp as CanvasImageSource, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
   };
 
-  // Resize canvas to match device pixel ratio for crisp rendering.
+  // Resize both canvases to device pixel ratio.
+  const resizeCanvases = () => {
+    const dpr = window.devicePixelRatio || 1;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    [canvasARef, canvasBRef].forEach(ref => {
+      const c = ref.current;
+      if (!c) return;
+      c.width = w * dpr;
+      c.height = h * dpr;
+      c.style.width = `${w}px`;
+      c.style.height = `${h}px`;
+    });
+    const bmp = bitmaps.current[currentFrame.current];
+    if (bmp && canvasARef.current) drawTo(canvasARef.current, bmp);
+  };
+
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
-      drawFrame(currentFrame.current);
-    };
-    resize();
-    window.addEventListener('resize', resize);
-    return () => window.removeEventListener('resize', resize);
+    resizeCanvases();
+    window.addEventListener('resize', resizeCanvases);
+    return () => window.removeEventListener('resize', resizeCanvases);
   }, []);
 
-  // Preload all frames as ImageBitmap (GPU-ready, instant draw).
+  // Cross-fade to a new frame: draw onto inactive canvas, animate opacity swap.
+  const crossFadeTo = (idx: number) => {
+    const bmp = bitmaps.current[idx];
+    if (!bmp) return;
+    const canvasA = canvasARef.current;
+    const canvasB = canvasBRef.current;
+    if (!canvasA || !canvasB) return;
+
+    if (reduceMotion) {
+      // No fade — just draw directly to active canvas
+      const active = activeCanvas.current === 'A' ? canvasA : canvasB;
+      drawTo(active, bmp);
+      currentFrame.current = idx;
+      return;
+    }
+
+    const incoming = activeCanvas.current === 'A' ? canvasB : canvasA;
+    const outgoing = activeCanvas.current === 'A' ? canvasA : canvasB;
+
+    drawTo(incoming, bmp);
+
+    // Cancel any in-progress fade
+    if (fadeRaf.current) cancelAnimationFrame(fadeRaf.current);
+
+    const start = performance.now();
+    incoming.style.opacity = '0';
+    outgoing.style.opacity = '1';
+
+    const animate = (now: number) => {
+      const t = Math.min(1, (now - start) / FADE_MS);
+      incoming.style.opacity = String(t);
+      outgoing.style.opacity = String(1 - t);
+      if (t < 1) {
+        fadeRaf.current = requestAnimationFrame(animate);
+      } else {
+        incoming.style.opacity = '1';
+        outgoing.style.opacity = '0';
+        activeCanvas.current = activeCanvas.current === 'A' ? 'B' : 'A';
+        currentFrame.current = idx;
+        fadeRaf.current = 0;
+      }
+    };
+    fadeRaf.current = requestAnimationFrame(animate);
+  };
+
+  // Sequential priority loading: first 24 frames in order, then rest.
   useEffect(() => {
     let cancelled = false;
-    const load = async (i: number) => {
+
+    const loadBitmap = async (i: number) => {
       try {
         const res = await fetch(framePath(i + 1));
         const blob = await res.blob();
         if (cancelled) return;
+        let bmp: ImageBitmap | HTMLImageElement;
         if (typeof createImageBitmap !== 'undefined') {
-          const bmp = await createImageBitmap(blob);
-          if (!cancelled) {
-            bitmaps.current[i] = bmp;
-            if (i === 0) drawFrame(0);
-          }
+          bmp = await createImageBitmap(blob);
         } else {
-          // Safari fallback: HTMLImageElement
           const img = new Image();
           img.src = URL.createObjectURL(blob);
-          await new Promise((res) => { img.onload = img.onerror = res; });
-          if (!cancelled) {
-            bitmaps.current[i] = img;
-            if (i === 0) drawFrame(0);
-          }
+          await new Promise(r => { img.onload = img.onerror = r; });
+          bmp = img;
+        }
+        if (cancelled) return;
+        bitmaps.current[i] = bmp;
+        if (i === 0 && canvasARef.current) {
+          drawTo(canvasARef.current, bmp);
+          canvasARef.current.style.opacity = '1';
         }
       } catch { /* silent */ }
-      if (!cancelled) setLoaded((n) => n + 1);
+      if (!cancelled) setLoaded(n => n + 1);
     };
-    // Load first 10 frames immediately, rest async in background.
-    for (let i = 0; i < FRAME_COUNT; i++) load(i);
+
+    // Load priority frames sequentially (await each)
+    (async () => {
+      for (let i = 0; i < PRIORITY_FRAMES && !cancelled; i++) {
+        await loadBitmap(i);
+      }
+      // Load remaining frames in parallel
+      for (let i = PRIORITY_FRAMES; i < FRAME_COUNT; i++) {
+        loadBitmap(i);
+      }
+    })();
+
     return () => { cancelled = true; };
   }, []);
 
-  // DIRECT scroll → frame draw. No spring, no DOM src swap.
+  // Scroll → frame, direct mapping, cross-fade on change.
   useEffect(() => {
     let raf = 0;
     let pending = -1;
@@ -141,26 +193,26 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
     const apply = () => {
       raf = 0;
       if (pending < 0) return;
-      if (bitmaps.current[pending]) {
-        currentFrame.current = pending;
-        drawFrame(pending);
-      } else {
-        // Frame not loaded yet — find nearest loaded frame
-        let nearest = pending;
-        for (let d = 1; d < FRAME_COUNT; d++) {
-          if (pending - d >= 0 && bitmaps.current[pending - d]) { nearest = pending - d; break; }
-          if (pending + d < FRAME_COUNT && bitmaps.current[pending + d]) { nearest = pending + d; break; }
-        }
-        currentFrame.current = nearest;
-        drawFrame(nearest);
-      }
+      const target = pending;
       pending = -1;
+
+      if (target === currentFrame.current) return;
+
+      if (bitmaps.current[target]) {
+        crossFadeTo(target);
+      } else {
+        // Find nearest loaded frame
+        let nearest = target;
+        for (let d = 1; d < FRAME_COUNT; d++) {
+          if (target - d >= 0 && bitmaps.current[target - d]) { nearest = target - d; break; }
+          if (target + d < FRAME_COUNT && bitmaps.current[target + d]) { nearest = target + d; break; }
+        }
+        if (nearest !== currentFrame.current) crossFadeTo(nearest);
+      }
     };
 
-    // Use raw scrollYProgress (not spring) for 1:1 finger tracking.
     const unsub = scrollYProgress.on('change', (p) => {
       const idx = Math.min(FRAME_COUNT - 1, Math.max(0, Math.round(p * (FRAME_COUNT - 1))));
-      if (idx === currentFrame.current && pending === -1) return;
       pending = idx;
       if (!raf) raf = requestAnimationFrame(apply);
     });
@@ -184,39 +236,33 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
     };
   }, [mouseX, mouseY, reduceMotion]);
 
-  useEffect(() => {
-    const unsub = smoothProgress.on('change', (p) => { translateZ.set(p * 30); });
-    return unsub;
-  }, [smoothProgress, translateZ]);
-
   return (
-    <section ref={sectionRef} className="relative h-[220vh]">
+    <section ref={sectionRef} className="relative h-[154vh]">
       <motion.div
         className="sticky top-0 h-screen w-full overflow-hidden mesh-gradient"
         style={{ y: containerY }}
       >
-        {/* Frame-sequence canvas with 3D parallax */}
-        <div
+        {/* A/B canvas layers — cross-fade between frames */}
+        <motion.div
           className="absolute inset-0"
-          style={{ perspective: '1200px', perspectiveOrigin: '50% 50%' }}
+          style={{
+            opacity: canvasOpacity,
+            x: reduceMotion ? 0 : parallaxX,
+            y: reduceMotion ? 0 : parallaxY,
+            willChange: 'transform, opacity',
+          }}
         >
-          <motion.div
-            className="absolute inset-0"
-            style={{
-              rotateX: reduceMotion ? 0 : rotateX,
-              rotateY: reduceMotion ? 0 : rotateY,
-              z: reduceMotion ? 0 : translateZ,
-              opacity: canvasOpacity,
-              transformStyle: 'preserve-3d',
-              willChange: 'transform, opacity',
-            }}
-          >
-            <canvas
-              ref={canvasRef}
-              className="absolute inset-0 select-none pointer-events-none"
-              style={{ imageRendering: 'auto' }}
-            />
-          </motion.div>
+          <canvas
+            ref={canvasARef}
+            className="absolute inset-0 select-none pointer-events-none"
+            style={{ opacity: 1, transition: 'none' }}
+          />
+          <canvas
+            ref={canvasBRef}
+            className="absolute inset-0 select-none pointer-events-none"
+            style={{ opacity: 0, transition: 'none' }}
+          />
+        </motion.div>
 
           {/* Oval vignette — clears center for text, darkens edges so video breathes */}
           <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_55%_at_50%_50%,_transparent_30%,_rgba(6,6,4,0.92)_100%)]" />
@@ -226,7 +272,6 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
           <div className="absolute inset-x-0 top-0 h-40 pointer-events-none bg-gradient-to-b from-surface/90 to-transparent" />
           {/* Bottom fade blends the last frame into section B */}
           <div className="absolute inset-x-0 bottom-0 h-[35vh] pointer-events-none bg-gradient-to-b from-transparent via-surface/70 to-surface" />
-        </div>
 
         {/* Dead-center content block — title, stats, all centered */}
         <motion.div
