@@ -60,31 +60,22 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
       setLoadPct(Math.round((loaded / video.duration) * 100));
     };
 
-    const onReady = () => {
-      if (video.readyState >= 4) {
-        setVideoReady(true);
-        setTimeout(() => setOverlayVisible(false), 600);
-      }
-    };
-
-    const onCanPlayThrough = () => {
+    const markReady = () => {
       setVideoReady(true);
-      setTimeout(() => setOverlayVisible(false), 600);
+      setTimeout(() => setOverlayVisible(false), 400);
     };
 
     video.addEventListener('progress', onProgress);
-    video.addEventListener('canplay', onReady);
-    video.addEventListener('canplaythrough', onCanPlayThrough);
-    // Already fully buffered on mount?
-    if (video.readyState >= 4) {
+    video.addEventListener('canplay', markReady);
+    // Already has enough data on mount (cached)?
+    if (video.readyState >= 3) {
       setVideoReady(true);
       setOverlayVisible(false);
     }
 
     return () => {
       video.removeEventListener('progress', onProgress);
-      video.removeEventListener('canplay', onReady);
-      video.removeEventListener('canplaythrough', onCanPlayThrough);
+      video.removeEventListener('canplay', markReady);
     };
   }, []);
 
