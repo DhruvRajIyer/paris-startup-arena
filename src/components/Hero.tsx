@@ -8,9 +8,9 @@ import {
 } from 'motion/react';
 import { useRef, useEffect, useState } from 'react';
 
-const FRAME_COUNT = 192;
-const PRIORITY_FRAMES = 24; // Load these first before firing background loads
-const FADE_MS = 70; // Cross-fade duration between frames in ms
+const FRAME_COUNT = 200;
+const PRIORITY_FRAMES = 36; // Load these first before firing background loads
+const FADE_MS = 35; // Cross-fade duration between frames in ms
 const framePath = (i: number) =>
   `/hero-frames/frame_${String(i).padStart(3, '0')}.webp`;
 
@@ -237,7 +237,7 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
   }, [mouseX, mouseY, reduceMotion]);
 
   return (
-    <section ref={sectionRef} className="relative h-[154vh]">
+    <section ref={sectionRef} className="relative h-[150vh]">
       <motion.div
         className="sticky top-0 h-screen w-full overflow-hidden mesh-gradient"
         style={{ y: containerY }}
