@@ -179,9 +179,9 @@ export function MapView({ jobs, onJobClick, onClearFilters, savedJobs = new Set(
   hoveredJobRef.current = hoveredJob;
 
   return (
-    <div className="relative h-screen w-full flex">
-      {/* Map Section - Left Side */}
-      <div className="w-3/5 h-full relative">
+    <div className="relative w-full flex flex-col md:flex-row" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
+      {/* Map Section - top on mobile, left on desktop */}
+      <div className="w-full md:w-3/5 h-[45vh] md:h-full relative">
         <Map
           ref={mapRef}
           {...viewState}
@@ -217,7 +217,7 @@ export function MapView({ jobs, onJobClick, onClearFilters, savedJobs = new Set(
                 <div
                   className="relative cursor-pointer"
                   style={{ zIndex: isPinHovered || isHovered ? 50 : 1 }}
-                  onMouseEnter={() => setHoveredPin(job.id)}
+                  onMouseEnter={() => { if (window.matchMedia('(pointer: fine)').matches) setHoveredPin(job.id); }}
                   onMouseLeave={() => setHoveredPin(null)}
                   onClick={() => handlePinClick(job)}
                 >
@@ -275,12 +275,12 @@ export function MapView({ jobs, onJobClick, onClearFilters, savedJobs = new Set(
 
         {/* Title Overlay */}
         <motion.div 
-          className="absolute top-6 left-6 z-10 pointer-events-none glass px-5 py-4"
+          className="absolute top-4 left-4 md:top-6 md:left-6 z-10 pointer-events-none glass px-3 py-2 md:px-5 md:py-4"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <h2 className="text-2xl md:text-4xl font-headline text-on-surface uppercase tracking-tight max-w-xl leading-none">
+          <h2 className="text-lg md:text-4xl font-headline text-on-surface uppercase tracking-tight max-w-xl leading-none">
             FIND ROLES <span className="italic text-primary">Across</span> PARIS
           </h2>
           <p className="font-label text-[11px] text-tertiary uppercase tracking-widest mt-3">
@@ -293,9 +293,9 @@ export function MapView({ jobs, onJobClick, onClearFilters, savedJobs = new Set(
         </motion.div>
       </div>
 
-      {/* Job Cards Panel - Right Side */}
+      {/* Job Cards Panel - bottom on mobile, right on desktop */}
       <motion.div 
-        className="w-2/5 h-full bg-surface-container-low border-l border-outline-variant overflow-y-auto"
+        className="w-full md:w-2/5 flex-1 md:h-full bg-surface-container-low border-t md:border-t-0 md:border-l border-outline-variant overflow-y-auto"
         initial={{ x: 100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.2 }}

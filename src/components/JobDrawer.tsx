@@ -46,6 +46,8 @@ export function JobDrawer({ job, onClose, savedJobs, onToggleSave }: JobDrawerPr
     return () => { document.body.style.overflow = ''; };
   }, [job]);
 
+  const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
+
   return (
     <AnimatePresence>
       {job && (
@@ -60,14 +62,18 @@ export function JobDrawer({ job, onClose, savedJobs, onToggleSave }: JobDrawerPr
             onClick={onClose}
           />
 
-          {/* Drawer */}
+          {/* Drawer — bottom sheet on mobile, right panel on desktop */}
           <motion.div
-            className="fixed top-0 right-0 bottom-0 z-[61] w-full max-w-xl bg-surface border-l border-outline-variant flex flex-col shadow-2xl"
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
+            className="fixed inset-x-0 bottom-0 z-[61] max-h-[92vh] rounded-t-2xl md:rounded-none md:inset-x-auto md:top-0 md:right-0 md:bottom-0 md:w-full md:max-w-xl bg-surface md:border-l border-outline-variant flex flex-col shadow-2xl"
+            initial={isMobile ? { y: '100%' } : { x: '100%' }}
+            animate={isMobile ? { y: 0 } : { x: 0 }}
+            exit={isMobile ? { y: '100%' } : { x: '100%' }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           >
+            {/* Drag handle on mobile */}
+            <div className="md:hidden flex justify-center pt-3 pb-1 flex-shrink-0">
+              <div className="w-10 h-1 rounded-full bg-outline-variant/60" />
+            </div>
             {/* Header */}
             <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-outline-variant/40">
               <div className="flex items-start gap-4 min-w-0">

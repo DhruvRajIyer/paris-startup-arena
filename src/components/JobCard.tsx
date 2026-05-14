@@ -27,6 +27,7 @@ export function JobCard({ job, onClick }: JobCardProps) {
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
+    if (window.matchMedia('(pointer: coarse)').matches) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       const rect = card.getBoundingClientRect();

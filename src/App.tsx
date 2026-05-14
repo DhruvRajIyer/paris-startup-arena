@@ -184,7 +184,10 @@ export default function App() {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-          <span className="text-xl font-light tracking-widest text-on-surface font-headline uppercase">Paris Startup Arena</span>
+          <span className="text-base md:text-xl font-light tracking-widest text-on-surface font-headline uppercase">
+            <span className="hidden sm:inline">Paris Startup Arena</span>
+            <span className="sm:hidden">PSA</span>
+          </span>
         </motion.div>
 
         {/* Desktop links — col 2, truly centred */}
@@ -322,9 +325,9 @@ export default function App() {
 
         {/* Waitlist */}
         <section id="waitlist" className="bg-surface relative overflow-hidden pt-24 pb-20">
-          <div className="max-w-4xl mx-auto px-8 text-center mb-16">
+          <div className="max-w-4xl mx-auto px-4 md:px-8 text-center mb-16">
             <motion.h2
-              className="text-6xl md:text-8xl font-headline text-on-surface mb-12"
+              className="text-4xl md:text-8xl font-headline text-on-surface mb-12"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
@@ -342,7 +345,7 @@ export default function App() {
             />
 
             <motion.p
-              className="font-headline italic text-2xl text-on-surface mb-12 max-w-2xl mx-auto"
+              className="font-headline italic text-lg md:text-2xl text-on-surface mb-12 max-w-2xl mx-auto"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
@@ -453,7 +456,8 @@ export default function App() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.5 }}
           >
-            <div>MADE IN PARIS • © 2025 THE DIGITAL CURATOR. ALL RIGHTS RESERVED.</div>
+            <div className="text-center">MADE IN PARIS</div>
+            <div className="text-center">© 2025 THE DIGITAL CURATOR. ALL RIGHTS RESERVED.</div>
             <div className="text-[10px] text-[#6A5C48]">
               <a
                 href="https://logo.dev"

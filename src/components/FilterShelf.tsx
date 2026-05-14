@@ -95,11 +95,11 @@ export function FilterShelf({ filters, onFilterChange, isSticky, filteredCount, 
       transition={{ duration: 0.5, ease: 'easeOut' }}
     >
       {/* Row 1: category pills + count + more-filters */}
-      <div className="px-8 py-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="font-headline italic text-primary text-xl shrink-0">The Curator</span>
+      <div className="px-4 md:px-8 py-4">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+          <span className="font-headline italic text-primary text-xl shrink-0 hidden md:block">The Curator</span>
 
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="flex overflow-x-auto md:flex-wrap md:justify-center gap-2 w-full md:w-auto pb-1 md:pb-0 no-scrollbar">
             {CATEGORIES.map(cat => (
               <motion.button
                 key={cat.value}
@@ -118,7 +118,7 @@ export function FilterShelf({ filters, onFilterChange, isSticky, filteredCount, 
             ))}
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-3 shrink-0 w-full md:w-auto justify-between md:justify-end">
             {filteredCount !== undefined && (
               <div className="flex items-center gap-1.5">
                 <motion.span
@@ -160,7 +160,7 @@ export function FilterShelf({ filters, onFilterChange, isSticky, filteredCount, 
       <AnimatePresence>
         {expanded && (
           <motion.div
-            className="border-t border-outline-variant/30 bg-surface/60 px-8 py-5"
+            className="border-t border-outline-variant/30 bg-surface/60 px-4 md:px-8 py-5"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
