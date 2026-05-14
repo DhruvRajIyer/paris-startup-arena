@@ -17,8 +17,20 @@ export default defineConfig(({mode}) => {
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
+      // Do not modify—file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
+    },
+    build: {
+      rollupOptions: {
+        external: ['@google/genai'],
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'motion/react'],
+            'vendor-map': ['mapbox-gl', 'react-map-gl', 'deck.gl', '@deck.gl/layers', '@deck.gl/mapbox', '@deck.gl/react'],
+            'vendor-3d': ['three', '@react-three/fiber', '@react-three/drei'],
+          },
+        },
+      },
     },
   };
 });
