@@ -17,6 +17,7 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoReady, setVideoReady] = useState(false);
+  const [overlayVisible, setOverlayVisible] = useState(true);
   const [loadPct, setLoadPct] = useState(0);
   const reduceMotion = useReducedMotion();
 
@@ -60,19 +61,30 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
     };
 
     const onReady = () => {
-      if (video.readyState >= 3) setVideoReady(true);
+      if (video.readyState >= 4) {
+        setVideoReady(true);
+        setTimeout(() => setOverlayVisible(false), 600);
+      }
+    };
+
+    const onCanPlayThrough = () => {
+      setVideoReady(true);
+      setTimeout(() => setOverlayVisible(false), 600);
     };
 
     video.addEventListener('progress', onProgress);
     video.addEventListener('canplay', onReady);
-    video.addEventListener('canplaythrough', onReady);
-    // Already buffered on mount?
-    if (video.readyState >= 3) setVideoReady(true);
+    video.addEventListener('canplaythrough', onCanPlayThrough);
+    // Already fully buffered on mount?
+    if (video.readyState >= 4) {
+      setVideoReady(true);
+      setOverlayVisible(false);
+    }
 
     return () => {
       video.removeEventListener('progress', onProgress);
       video.removeEventListener('canplay', onReady);
-      video.removeEventListener('canplaythrough', onReady);
+      video.removeEventListener('canplaythrough', onCanPlayThrough);
     };
   }, []);
 
@@ -85,19 +97,20 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
 
     const apply = () => {
       raf = 0;
-      if (video.readyState < 1) return;
-      const duration = video.duration || 4.17;
+      if (!videoReady || video.readyState < 2) return;
+      const duration = video.duration || 4.1;
       video.currentTime = Math.min(duration, Math.max(0, targetTime));
     };
 
     const unsub = scrollYProgress.on('change', (p) => {
-      const duration = video.duration || 4.17;
+      if (!videoReady) return;
+      const duration = video.duration || 4.1;
       targetTime = p * duration;
       if (!raf) raf = requestAnimationFrame(apply);
     });
 
     return () => { unsub(); if (raf) cancelAnimationFrame(raf); };
-  }, [scrollYProgress]);
+  }, [scrollYProgress, videoReady]);
 
   // Mouse tracking.
   useEffect(() => {
@@ -265,11 +278,40 @@ export function Hero({ jobCount = 247, companyCount = 83 }: HeroProps) {
           )}
         </motion.div>
 
-        {/* Loading indicator until video has enough data */}
-        {!videoReady && (
-          <div className="absolute bottom-14 left-1/2 -translate-x-1/2 z-20 font-label text-[8px] uppercase tracking-[0.25em] text-tertiary/60 whitespace-nowrap">
-            {loadPct > 0 ? `Buffering ${loadPct}%` : 'Loading…'}
-          </div>
+        {/* Full-screen cinematic loading overlay */}
+        {overlayVisible && (
+          <motion.div
+            className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-surface"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: videoReady ? 0 : 1 }}
+            transition={{ duration: 0.6, ease: 'easeInOut' }}
+            onAnimationComplete={() => { if (videoReady) setOverlayVisible(false); }}
+            style={{ pointerEvents: videoReady ? 'none' : 'auto' }}
+          >
+            <motion.p
+              className="font-label text-[9px] uppercase tracking-[0.4em] text-primary/70 mb-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              Paris&nbsp;·&nbsp;Startup&nbsp;Arena
+            </motion.p>
+            <div className="w-48 h-px bg-outline-variant/30 relative overflow-hidden">
+              <motion.div
+                className="absolute inset-y-0 left-0 bg-primary"
+                style={{ width: `${loadPct}%` }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+              />
+            </div>
+            <motion.p
+              className="font-label text-[8px] uppercase tracking-[0.3em] text-tertiary/50 mt-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.4 }}
+            >
+              {loadPct > 0 ? `${loadPct}%` : 'Loading…'}
+            </motion.p>
+          </motion.div>
         )}
       </motion.div>
     </section>
